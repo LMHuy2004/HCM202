@@ -213,16 +213,16 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const QUESTIONS = [
-  {q:"Hồ Chí Minh sinh năm nào?",opts:["1888","1890","1892","1895"],ans:1,time:15},
-  {q:"Hồ Chí Minh ra đi tìm đường cứu nước từ bến cảng nào?",opts:["Hải Phòng","Đà Nẵng","Nhà Rồng (Sài Gòn)","Vũng Tàu"],ans:2,time:15},
-  {q:"Tên gọi nào KHÔNG phải của Hồ Chí Minh?",opts:["Nguyễn Ái Quốc","Nguyễn Tất Thành","Nguyễn Sinh Cung","Nguyễn Văn Luyện"],ans:3,time:20},
-  {q:"Hồ Chí Minh đọc bản Tuyên ngôn Độc lập vào ngày nào?",opts:["2/9/1945","19/8/1945","30/4/1975","7/5/1954"],ans:0,time:15},
-  {q:"Theo Hồ Chí Minh, điều gì quý giá nhất của con người?",opts:["Tiền bạc","Danh vọng","Độc lập - Tự do - Hạnh phúc","Quyền lực"],ans:2,time:20},
-  {q:"Tư tưởng Hồ Chí Minh về con người tập trung vào điều gì?",opts:["Xây dựng con người toàn diện","Ưu tiên kinh tế","Tập trung quân sự","Phát triển kỹ thuật"],ans:0,time:20},
-  {q:"Chiến dịch nào kết thúc kháng chiến chống Pháp?",opts:["Chiến dịch Hồ Chí Minh","Chiến dịch Điện Biên Phủ","Chiến dịch Biên giới","Chiến dịch Tây Nguyên"],ans:1,time:15},
-  {q:"Hồ Chí Minh mất năm nào?",opts:["1965","1967","1969","1971"],ans:2,time:15},
-  {q:"Quê hương của Hồ Chí Minh ở tỉnh nào?",opts:["Hà Tĩnh","Nghệ An","Thanh Hóa","Quảng Bình"],ans:1,time:15},
-  {q:"Đảng Cộng sản Việt Nam được thành lập năm nào?",opts:["1925","1928","1930","1935"],ans:2,time:15}
+  {q:"Theo Tư tưởng Hồ Chí Minh, độc lập dân tộc phải gắn liền với yếu tố nào để sự độc lập đó thực sự có ý nghĩa?",opts:["Sự ủng hộ của quốc tế","Tự do và hạnh phúc của nhân dân","Sự phát triển của khoa học công nghệ","Sức mạnh quân sự vững mạnh"],ans:1,time:20},
+  {q:"Chủ tịch Hồ Chí Minh từng nhấn mạnh: \"Đem sức ta mà tự giải phóng cho ta\". Lời dạy này đề cao tinh thần nào?",opts:["Tranh thủ ngoại lực","Tự lực tự cường","Đoàn kết quốc tế","Dựa vào sự giúp đỡ của nước lớn"],ans:1,time:20},
+  {q:"Trong kỷ nguyên số hiện nay, khái niệm \"độc lập, chủ quyền quốc gia\" được mở rộng thêm khía cạnh nào?",opts:["Chủ quyền không gian mạng và an ninh kinh tế","Khép kín nền kinh tế để tự cung tự cấp","Chỉ sử dụng công nghệ do trong nước sản xuất","Từ chối mọi sự hợp tác quốc tế"],ans:0,time:20},
+  {q:"Vận dụng bài học \"Tự lực tự cường\" vào học tập, hành động nào của sinh viên là ĐÚNG đắn nhất?",opts:["Tự cô lập, không giao tiếp quốc tế","Sao chép toàn bộ template nước ngoài cho nhanh","Phụ thuộc hoàn toàn vào AI để làm thay mọi việc","Chủ động làm chủ công cụ, nâng cao năng lực và tư duy phản biện"],ans:3,time:20},
+  {q:"Theo tư tưởng Hồ Chí Minh, đâu là động lực lớn nhất trong xây dựng chủ nghĩa xã hội?",opts:["Nguồn tài nguyên thiên nhiên phong phú","Sự hỗ trợ tài chính từ quốc tế","Con người — trí tuệ và năng lực của người lao động","Hệ thống máy móc hiện đại"],ans:2,time:20},
+  {q:"Khi học hỏi kinh nghiệm từ các nước tiên tiến, Bác Hồ đặc biệt lưu ý chúng ta điều gì?",opts:["Phải sao chép y nguyên mô hình của họ","Phải tránh rập khuôn, xuất phát từ thực tiễn đất nước","Phải từ bỏ hoàn toàn các giá trị truyền thống","Chỉ học hỏi nước có nền văn hóa tương đồng"],ans:1,time:20},
+  {q:"Đối với người trẻ làm dự án quốc tế, làm thế nào để \"hội nhập nhưng không rập khuôn\" như lời Bác?",opts:["Bỏ qua tiêu chuẩn kỹ thuật quốc tế","Chỉ dùng chất liệu nước ngoài để tiếp cận thị trường","Tiếp thu công nghệ lõi nhưng lồng ghép bản sắc văn hóa Việt Nam","Không cần quan tâm đến bản sắc, chỉ cần bán được"],ans:2,time:20},
+  {q:"Bài thuyết trình đề xuất \"3 trụ cột tự chủ\" của cá nhân khi vươn ra thế giới gồm những gì?",opts:["Tự chủ tư duy – Tự chủ năng lực – Tự chủ văn hóa","Tự chủ tài chính – Tự chủ thời gian – Tự chủ công nghệ","Tự chủ ngoại ngữ – Tự chủ giao tiếp – Tự chủ hành động","Tự chủ học tập – Tự chủ việc làm – Tự chủ tư duy"],ans:0,time:20},
+  {q:"Biểu hiện nào cho thấy một cá nhân đang đánh mất \"Sự tự chủ trong tư duy\" trước làn sóng công nghệ?",opts:["Biết dùng AI để tìm tài liệu tham khảo nhanh","Kiểm chứng lại thông tin đọc được trên mạng xã hội","Để công nghệ định hướng suy nghĩ và thui chột khả năng phản biện","Dùng phần mềm tối ưu hóa quy trình làm việc"],ans:2,time:20},
+  {q:"Khát vọng \"độc lập dân tộc\" của Bác truyền lại cho thế hệ trẻ bài học cốt lõi nào khi bước ra thế giới?",opts:["Phải luôn cảnh giác và hạn chế giao lưu quốc tế","Mỗi cá nhân có tự chủ, có trí tuệ và bản sắc thì quốc gia mới thực sự độc lập, tự cường","Chỉ cần học giỏi ngoại ngữ là đủ","Chờ các nước khác chuyển giao toàn bộ công nghệ tiên tiến"],ans:1,time:20}
 ];
 
 let gameId = '';
