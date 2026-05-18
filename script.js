@@ -85,67 +85,67 @@ function wsSend(obj) {
   }
 })();
 
-// ===== QUIZ DATA (bám sát nội dung thuyết trình) =====
+// ===== QUIZ DATA =====
 const quizData = [
   {
-    q: "Theo phần \"Đặt vấn đề\", tư tưởng \"độc lập dân tộc\" của HCM trong bối cảnh hiện đại có thể liên hệ đến điều gì?",
-    opts: ["Chỉ liên quan đến lịch sử", "Tự chủ tư duy, tài chính, kỹ năng của mỗi cá nhân", "Chỉ áp dụng cho lãnh đạo quốc gia", "Không còn phù hợp với thời đại"],
+    q: "Theo Tư tưởng Hồ Chí Minh, độc lập dân tộc phải gắn liền với yếu tố nào để sự độc lập đó thực sự có ý nghĩa?",
+    opts: ["Sự ủng hộ của quốc tế", "Tự do và hạnh phúc của nhân dân", "Sự phát triển của khoa học công nghệ", "Sức mạnh quân sự vững mạnh"],
     answer: 1,
-    explain: "Bài thuyết trình liên hệ \"độc lập dân tộc\" với tinh thần tự chủ cá nhân: tự chủ tư duy, tài chính, kỹ năng — đây là \"phiên bản cá nhân\" của độc lập."
+    explain: "Bác Hồ khẳng định: \"Nước độc lập mà dân không hưởng hạnh phúc tự do, thì độc lập cũng chẳng có nghĩa lý gì.\" Độc lập phải gắn với tự do và hạnh phúc thực sự của nhân dân."
   },
   {
-    q: "Trong phần Cơ sở lý thuyết, HCM đã dẫn nguồn từ hai bản tuyên ngôn nổi tiếng nào để khẳng định quyền dân tộc?",
-    opts: ["Tuyên ngôn Cộng sản & Hiến pháp Liên Xô", "Tuyên ngôn Độc lập Mỹ 1776 & Tuyên ngôn Nhân quyền Pháp 1791", "Hiến chương LHQ & Hiệp định Giơnevơ", "Công ước Quốc tế & Tuyên bố Cairo"],
+    q: "Chủ tịch Hồ Chí Minh từng nhấn mạnh nguyên tắc: \"Đem sức ta mà tự giải phóng cho ta\". Lời dạy này đề cao tinh thần nào trong cách mạng giải phóng dân tộc?",
+    opts: ["Tranh thủ ngoại lực", "Tự lực tự cường", "Đoàn kết quốc tế", "Dựa vào sự giúp đỡ của nước lớn"],
     answer: 1,
-    explain: "HCM mở đầu Tuyên ngôn Độc lập 1945 bằng việc trích dẫn Tuyên ngôn Độc lập Mỹ (1776) và Tuyên ngôn Nhân quyền Pháp (1791) để khẳng định quyền bình đẳng của các dân tộc."
+    explain: "Người thức tỉnh tinh thần tự lực tự cường: \"Công cuộc giải phóng anh em chỉ có thể thực hiện được bằng sự nỗ lực của bản thân anh em.\" Đây là trụ cột 2.3 trong bài thuyết trình."
   },
   {
-    q: "Câu nói nào dưới đây thể hiện trụ cột \"Độc lập gắn liền hạnh phúc nhân dân\" trong bài thuyết trình?",
-    opts: ["\"Không có gì quý hơn độc lập, tự do\"", "\"Nước độc lập mà dân không hưởng hạnh phúc tự do, thì độc lập cũng chẳng có nghĩa lý gì\"", "\"Nước Việt Nam là một, dân tộc Việt Nam là một\"", "\"Đoàn kết, đoàn kết, đại đoàn kết\""],
-    answer: 1,
-    explain: "Đây là câu nói nổi tiếng của HCM, thể hiện rõ trụ cột thứ 2: độc lập phải đi đôi với cơm ăn, áo mặc, học hành cho nhân dân."
+    q: "Trong bối cảnh toàn cầu hóa và kỷ nguyên số hiện nay, khái niệm \"độc lập, chủ quyền quốc gia\" được mở rộng thêm khía cạnh nào rất quan trọng?",
+    opts: ["Chủ quyền không gian mạng và an ninh kinh tế", "Khép kín nền kinh tế để tự cung tự cấp", "Chỉ sử dụng công nghệ do trong nước tự sản xuất", "Từ chối mọi sự hợp tác quốc tế"],
+    answer: 0,
+    explain: "\"Chiến trường\" ngày nay không chỉ là lãnh thổ mà còn là kinh tế, công nghệ và dữ liệu số. Độc lập dân tộc hiện nay gắn với chủ quyền số quốc gia — an ninh mạng và kinh tế số."
   },
   {
-    q: "Theo timeline trong bài, sự kiện nào giúp HCM tìm ra con đường cách mạng vô sản?",
-    opts: ["Chiến tranh thế giới thứ nhất (1914)", "CM Tháng Mười Nga 1917 & đọc Luận cương Lênin 1920", "Thành lập Đảng Cộng sản 1930", "Hội nghị Véc-xây 1919"],
-    answer: 1,
-    explain: "Theo timeline: CM Tháng Mười Nga (1917) ảnh hưởng sâu sắc, và năm 1920 khi đọc Luận cương Lênin, HCM \"vui mừng đến phát khóc lên\" — tìm ra con đường CMVS."
+    q: "Vận dụng bài học \"Tự lực tự cường\" của Bác vào môi trường học tập và làm việc toàn cầu, hành động nào sau đây của sinh viên là ĐÚNG đắn nhất?",
+    opts: ["Tự cô lập, không giao tiếp với đồng nghiệp quốc tế", "Sao chép toàn bộ các mẫu thiết kế (template) của nước ngoài cho nhanh", "Phụ thuộc hoàn toàn vào trí tuệ nhân tạo (AI) để làm thay mọi việc", "Chủ động làm chủ công cụ, nâng cao năng lực chuyên môn và tư duy phản biện"],
+    answer: 3,
+    explain: "Bài học tự chủ cá nhân: chủ động học hỏi công nghệ, biết dùng AI hỗ trợ nhưng không phụ thuộc hay đánh mất tư duy phản biện và bản sắc văn hóa Việt Nam."
   },
   {
-    q: "Chánh cương vắn tắt (1930) xác định mục tiêu gì, được nhấn mạnh trong phần lý thuyết?",
-    opts: ["Xây dựng nền dân chủ tư sản", "Làm tư sản dân quyền CM và thổ địa CM để đi tới xã hội cộng sản", "Hợp tác với thực dân Pháp", "Chỉ đấu tranh giải phóng dân tộc"],
-    answer: 1,
-    explain: "Chánh cương vắn tắt (1930) gắn liền độc lập dân tộc với CNXH — đây là luận điểm then chốt trong bài thuyết trình."
+    q: "Theo tư tưởng Hồ Chí Minh về xây dựng chủ nghĩa xã hội, đâu là động lực lớn nhất và quan trọng nhất?",
+    opts: ["Nguồn tài nguyên thiên nhiên phong phú", "Sự hỗ trợ tài chính từ quốc tế", "Con người (đề cao trí tuệ và năng lực của người lao động)", "Hệ thống máy móc hiện đại"],
+    answer: 2,
+    explain: "Hồ Chí Minh đề cao vai trò của con người — \"có dân là có tất cả\". Cách mạng là việc chung của toàn dân, sức mạnh nội lực từ trí tuệ và năng lực người lao động là quyết định."
   },
   {
-    q: "Phần \"Cơ sở vận dụng\" nhấn mạnh rằng \"chủ quyền\" trong thời đại số bao gồm những gì?",
-    opts: ["Chỉ là lãnh thổ, biên giới", "Chủ quyền dữ liệu, an ninh mạng, kinh tế số", "Chỉ là quân sự", "Chỉ là ngoại giao"],
+    q: "Khi học hỏi kinh nghiệm xây dựng chủ nghĩa xã hội từ các nước tiên tiến, Bác Hồ đã đặc biệt lưu ý chúng ta điều gì?",
+    opts: ["Phải sao chép y nguyên mô hình của họ", "Phải tránh rập khuôn, máy móc và cần xuất phát từ thực tiễn đất nước", "Phải từ bỏ hoàn toàn các giá trị truyền thống", "Chỉ học hỏi các nước có nền văn hóa tương đồng"],
     answer: 1,
-    explain: "Bài thuyết trình mở rộng khái niệm chủ quyền: không chỉ lãnh thổ mà còn chủ quyền dữ liệu, an ninh mạng, kinh tế số — yêu cầu làm chủ công nghệ."
+    explain: "Độc lập phải là độc lập thật sự, hoàn toàn và triệt để — không rập khuôn máy móc. Tư tưởng HCM luôn gắn với thực tiễn Việt Nam, không sao chép nguyên vẹn mô hình nước ngoài."
   },
   {
-    q: "Nguyên tắc \"Hội nhập nhưng không hòa tan\" trong phần Vận dụng lấy cảm hứng từ đặc điểm nào của HCM?",
-    opts: ["HCM chỉ học trong nước", "HCM tiếp thu tinh hoa Đông-Tây nhưng luôn giữ gốc dân tộc", "HCM không giao lưu quốc tế", "HCM chỉ theo một học thuyết duy nhất"],
-    answer: 1,
-    explain: "Bài thuyết trình liên hệ: như HCM tiếp thu Mác-Lênin, văn hóa phương Tây nhưng luôn giữ gốc dân tộc — VN hội nhập nhưng giữ bản sắc."
+    q: "Đối với một người trẻ khi làm việc trong các dự án quốc tế (như phát triển phần mềm, làm game...), làm thế nào để \"hội nhập nhưng không rập khuôn\" như lời Bác dạy?",
+    opts: ["Bỏ qua các tiêu chuẩn kỹ thuật quốc tế để làm theo ý mình", "Chỉ sử dụng các chất liệu của nước ngoài để dễ tiếp cận thị trường", "Tiếp thu công nghệ lõi tiên tiến nhưng khéo léo lồng ghép bản sắc văn hóa Việt Nam vào sản phẩm", "Không cần quan tâm đến bản sắc, chỉ cần sản phẩm bán được"],
+    answer: 2,
+    explain: "Như HCM tiếp thu tinh hoa Đông-Tây nhưng luôn giữ gốc dân tộc — người trẻ tiếp thu công nghệ nhưng lồng ghép bản sắc Việt Nam, hội nhập không hòa tan."
   },
   {
-    q: "Bài học \"Giữ gốc, vươn xa\" trong phần Giải pháp ám chỉ điều gì?",
-    opts: ["Không nên ra nước ngoài", "Giữ vững bản sắc, giá trị cốt lõi VN khi bước ra thế giới", "Chỉ tập trung phát triển trong nước", "Từ bỏ văn hóa truyền thống để hội nhập"],
-    answer: 1,
-    explain: "Như HCM ra đi tìm đường nhưng luôn hướng về Tổ quốc — mỗi cá nhân khi bước ra thế giới cần giữ vững giá trị cốt lõi, bản sắc VN."
+    q: "Để vươn ra môi trường toàn cầu một cách bản lĩnh, phần thuyết trình của nhóm đã đề xuất \"3 trụ cột tự chủ\" của cá nhân bao gồm những gì?",
+    opts: ["Tự chủ tư duy – Tự chủ năng lực – Tự chủ văn hóa", "Tự chủ tài chính – Tự chủ thời gian – Tự chủ công nghệ", "Tự chủ ngoại ngữ – Tự chủ giao tiếp – Tự chủ hành động", "Tự chủ học tập – Tự chủ việc làm – Tự chủ tư duy"],
+    answer: 0,
+    explain: "3 trụ cột tự chủ cá nhân trong bài thuyết trình: Tự chủ tư duy (không để công nghệ định hướng), Tự chủ năng lực (kỹ năng thực sự), Tự chủ văn hóa (giữ bản sắc)."
   },
   {
-    q: "Quan điểm \"xây đi đôi với chống\" của HCM được bài thuyết trình áp dụng cho cá nhân như thế nào?",
-    opts: ["Chỉ xây dựng bản thân là đủ", "Xây dựng bản thân đồng thời chống thói xấu: chủ nghĩa cá nhân, lười biếng, lãng phí", "Chỉ cần chống lại kẻ thù bên ngoài", "Không liên quan đến cá nhân"],
-    answer: 1,
-    explain: "Bài học thứ 6: \"xây\" đi đôi với \"chống\" — xây dựng bản thân đồng thời chống lại những \"tác phong xấu\" như HCM đã dạy."
+    q: "Biểu hiện nào sau đây cho thấy một cá nhân đang đánh mất đi \"Sự tự chủ trong tư duy\" trước làn sóng công nghệ hiện nay?",
+    opts: ["Biết dùng AI để tìm kiếm tài liệu tham khảo nhanh chóng", "Kiểm chứng lại các thông tin đọc được trên mạng xã hội", "Để các công cụ công nghệ định hướng suy nghĩ và thui chột khả năng phản biện độc lập", "Dùng phần mềm để tối ưu hóa quy trình làm việc cá nhân"],
+    answer: 2,
+    explain: "Nguy cơ mất tự chủ số: khi phụ thuộc hoàn toàn vào AI và mạng xã hội, tư duy phản biện bị thui chột — đây là \"mất độc lập\" phiên bản cá nhân trong thời đại số."
   },
   {
-    q: "Theo bài thuyết trình, hệ thống động lực mạnh mẽ nhất của CNXH được tạo từ 3 yếu tố nào?",
-    opts: ["Kinh tế, quân sự, ngoại giao", "Lợi ích của dân, dân chủ, đoàn kết toàn dân", "Đảng, Nhà nước, Quân đội", "Công nghiệp hóa, hiện đại hóa, đô thị hóa"],
+    q: "Tựu trung lại, khát vọng \"độc lập dân tộc\" của Bác Hồ năm xưa truyền lại cho thế hệ trẻ ngày nay bài học cốt lõi nào khi bước ra thế giới?",
+    opts: ["Phải luôn cảnh giác và hạn chế giao lưu quốc tế", "Mỗi cá nhân có tự chủ, có trí tuệ và bản sắc thì quốc gia mới thực sự độc lập, tự cường", "Chỉ cần học giỏi ngoại ngữ là đủ để bảo vệ độc lập dân tộc", "Chờ đợi các quốc gia khác chuyển giao toàn bộ công nghệ tiên tiến cho mình"],
     answer: 1,
-    explain: "Trong tư tưởng HCM: lợi ích của dân, dân chủ của dân, đoàn kết toàn dân gắn bó hữu cơ — tạo nên hệ thống động lực mạnh mẽ nhất."
+    explain: "Tư tưởng HCM về độc lập dân tộc, tự lực tự cường và lấy dân làm gốc vẫn nguyên giá trị trong thời đại AI: mỗi cá nhân tự chủ thì quốc gia mới thực sự độc lập, tự cường."
   }
 ];
 
