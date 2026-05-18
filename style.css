@@ -83,6 +83,326 @@ body {
 .card-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--primary-light); }
 .card-text { font-size: 0.92rem; color: var(--text-muted); line-height: 1.7; }
 
+/* ===== THEORY SECTION ===== */
+.theory-block {
+  width: 100%; max-width: 900px;
+  background: var(--gradient-card);
+  border: 1px solid rgba(212,165,116,0.08);
+  border-left: 4px solid var(--primary-dark);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  transition: var(--transition);
+}
+.theory-block:hover { background: var(--bg-card-hover); border-left-color: var(--primary); }
+.theory-block-header {
+  display: flex; align-items: flex-start; gap: 16px;
+  margin-bottom: 18px;
+}
+.theory-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 800;
+  color: #fff;
+  background: var(--gradient-accent);
+  padding: 4px 12px; border-radius: 20px;
+  white-space: nowrap; margin-top: 3px;
+  box-shadow: 0 2px 10px rgba(212,165,116,0.25);
+}
+.theory-block-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem; font-weight: 700;
+  color: var(--primary-light); line-height: 1.5;
+}
+.theory-list {
+  list-style: none; padding: 0;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.theory-list li {
+  font-size: 0.93rem; color: var(--text-muted);
+  line-height: 1.8; padding-left: 16px;
+  border-left: 2px solid rgba(212,165,116,0.15);
+}
+.theory-list li em {
+  color: var(--primary-light);
+  font-style: italic;
+}
+.theory-list li strong { color: var(--text); }
+
+.theory-synthesis {
+  max-width: 900px; width: 100%;
+  background: linear-gradient(135deg, rgba(212,165,116,0.08), rgba(192,57,43,0.05));
+  border: 1px solid rgba(212,165,116,0.18);
+  border-radius: var(--radius);
+  padding: 32px 40px;
+  margin-top: 16px; text-align: center;
+}
+.theory-synthesis-label {
+  font-size: 0.75rem; text-transform: uppercase;
+  letter-spacing: 2.5px; color: var(--primary);
+  font-weight: 700; margin-bottom: 14px;
+}
+.theory-synthesis-text {
+  font-size: 1rem; color: var(--text-muted);
+  line-height: 1.85;
+}
+.theory-synthesis-text strong { color: var(--primary-light); }
+.theory-synthesis-text em { color: var(--text); font-style: italic; }
+
+/* ===== PROBLEM SECTION ===== */
+.problem-intro {
+  max-width: 800px;
+  text-align: center;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  line-height: 1.85;
+  margin-bottom: 48px;
+}
+.problem-intro strong { color: var(--primary-light); }
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  width: 100%; max-width: 900px;
+  margin-bottom: 48px;
+}
+.problem-card {
+  background: var(--gradient-card);
+  border: 1px solid rgba(212,165,116,0.08);
+  border-radius: var(--radius);
+  padding: 28px 30px;
+  transition: var(--transition);
+}
+.problem-card:hover { background: var(--bg-card-hover); transform: translateY(-3px); }
+.problem-card-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 16px;
+}
+.problem-icon { font-size: 1.8rem; }
+.problem-card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem; font-weight: 700;
+  color: var(--text);
+}
+.problem-card-title .highlight { color: var(--primary); }
+.problem-card-lead {
+  font-size: 0.9rem; color: var(--text-muted);
+  margin-bottom: 12px; line-height: 1.6;
+}
+.problem-list {
+  list-style: none; padding: 0;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.problem-list li {
+  font-size: 0.9rem; color: var(--text-muted);
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  border-left: 3px solid rgba(212,165,116,0.2);
+  line-height: 1.5;
+}
+.problem-list-danger li {
+  border-left-color: rgba(192,57,43,0.4);
+  color: #c9a090;
+}
+
+.problem-question {
+  max-width: 820px;
+  background: linear-gradient(135deg, rgba(212,165,116,0.07), rgba(192,57,43,0.04));
+  border: 1px solid rgba(212,165,116,0.15);
+  border-radius: var(--radius);
+  padding: 32px 40px;
+  margin-bottom: 32px;
+  position: relative;
+}
+.problem-question::before {
+  content: '?';
+  position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--gradient-accent);
+  color: #fff; font-weight: 800; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 32px; text-align: center;
+  box-shadow: 0 4px 16px rgba(212,165,116,0.3);
+}
+.problem-question-label {
+  font-size: 0.78rem; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--primary);
+  margin-bottom: 12px; font-weight: 600; text-align: center;
+}
+.problem-question-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem; font-style: italic;
+  color: var(--primary-light); line-height: 1.8; text-align: center;
+}
+.problem-question-text strong { color: var(--text); font-style: normal; }
+
+.problem-topic-label {
+  font-size: 0.8rem; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--text-dim);
+  margin-bottom: 14px; font-weight: 600;
+}
+
+.problem-objectives {
+  max-width: 860px; width: 100%;
+  margin-top: 16px;
+}
+.problem-obj-title {
+  font-size: 0.85rem; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--primary);
+  font-weight: 600; text-align: center;
+  margin-bottom: 24px;
+}
+.obj-list {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.obj-item {
+  display: flex; align-items: flex-start; gap: 18px;
+  background: var(--bg-card);
+  border: 1px solid rgba(212,165,116,0.06);
+  border-radius: 12px; padding: 16px 22px;
+  transition: var(--transition);
+}
+.obj-item:hover { background: var(--bg-card-hover); border-color: rgba(212,165,116,0.15); }
+.obj-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; font-weight: 800;
+  color: var(--primary); min-width: 32px;
+}
+.obj-item p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; padding-top: 2px; }
+
+/* ===== APPLY SECTION ===== */
+.apply-block {
+  width: 100%; max-width: 900px;
+  background: var(--gradient-card);
+  border: 1px solid rgba(212,165,116,0.08);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  margin-bottom: 20px;
+  transition: var(--transition);
+}
+.apply-block:hover { background: var(--bg-card-hover); }
+
+.apply-block-label {
+  display: inline-block;
+  font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--primary-dark);
+  background: rgba(212,165,116,0.1);
+  border: 1px solid rgba(212,165,116,0.2);
+  padding: 3px 12px; border-radius: 20px;
+  margin-bottom: 14px;
+}
+.apply-block-text {
+  font-size: 0.95rem; color: var(--text-muted);
+  line-height: 1.8; margin-bottom: 0;
+}
+.apply-block-text strong { color: var(--primary-light); }
+
+/* Quotes inside apply */
+.apply-quotes {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: 14px;
+}
+.apply-quote-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: rgba(212,165,116,0.05);
+  border-left: 3px solid var(--primary-dark);
+  border-radius: 0 10px 10px 0;
+  padding: 12px 18px;
+}
+.apply-quote-mark {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; color: var(--primary);
+  line-height: 1; opacity: 0.6; margin-top: -4px;
+}
+.apply-quote-item p {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-style: italic;
+  color: var(--primary-light); line-height: 1.6;
+}
+
+/* Bullet points */
+.apply-points {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: 8px;
+}
+.apply-point-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+}
+.apply-point-dot { font-size: 1.3rem; min-width: 28px; }
+.apply-point-item p {
+  font-size: 0.93rem; color: var(--text-muted);
+  line-height: 1.7;
+}
+.apply-point-item p strong { color: var(--text); }
+.apply-point-item p em { color: var(--primary-light); font-style: italic; }
+
+/* Warning callout */
+.apply-callout {
+  display: flex; align-items: flex-start; gap: 16px;
+  margin-top: 16px;
+  background: rgba(192,57,43,0.08);
+  border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 12px; padding: 18px 22px;
+}
+.apply-callout-icon { font-size: 1.5rem; min-width: 32px; }
+.apply-callout-title {
+  font-weight: 700; font-size: 0.95rem;
+  color: #e07060; margin-bottom: 6px;
+}
+.apply-callout-desc {
+  font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;
+}
+.apply-callout-desc strong { color: var(--primary-light); }
+
+/* Lesson grid */
+.apply-lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px; margin-top: 12px;
+}
+.apply-lesson-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(212,165,116,0.08);
+  border-radius: 12px; padding: 20px 22px;
+  transition: var(--transition);
+}
+.apply-lesson-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(212,165,116,0.15); }
+.apply-lesson-icon { font-size: 1.8rem; margin-bottom: 10px; }
+.apply-lesson-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--primary-light); margin-bottom: 8px;
+}
+.apply-lesson-text {
+  font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;
+}
+.apply-lesson-text strong { color: var(--text); }
+
+/* Conclusion */
+.apply-conclusion {
+  max-width: 900px; width: 100%;
+  background: linear-gradient(135deg, rgba(212,165,116,0.09), rgba(192,57,43,0.05));
+  border: 1px solid rgba(212,165,116,0.18);
+  border-radius: var(--radius);
+  padding: 30px 40px; text-align: center;
+  margin-top: 8px;
+}
+.apply-conclusion-label {
+  font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 2.5px; color: var(--primary);
+  font-weight: 700; margin-bottom: 12px;
+}
+.apply-conclusion-text {
+  font-size: 1rem; color: var(--text-muted); line-height: 1.85;
+}
+.apply-conclusion-text strong { color: var(--primary-light); }
+.apply-conclusion-text em { color: var(--text); font-style: italic; }
+
 /* TIMELINE */
 .timeline { max-width: 800px; width: 100%; position: relative; }
 .timeline::before { content: ''; position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--primary), var(--accent), transparent); }
