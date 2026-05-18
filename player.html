@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>HCM202 Quiz — Tham Gia</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07071a;--glass:rgba(255,255,255,0.06);--border:rgba(255,255,255,0.12);--purple:#7c3aed;--cyan:#06b6d4;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--text:#f1f5f9;--muted:#94a3b8}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 80% at 50% -20%,rgba(124,58,237,.25) 0%,transparent 60%);pointer-events:none;z-index:0}
+.screen{display:none;min-height:100vh;padding:24px 20px;position:relative;z-index:1;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.screen.active{display:flex}
+.card{background:var(--glass);border:1px solid var(--border);border-radius:20px;backdrop-filter:blur(20px);padding:28px;width:100%;max-width:460px}
+.btn{width:100%;padding:16px;border-radius:14px;border:none;font-family:'Inter',sans-serif;font-weight:700;font-size:18px;cursor:pointer;transition:all .2s;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--cyan));color:#fff;box-shadow:0 8px 30px rgba(124,58,237,.4)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.input{width:100%;padding:14px 18px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'Inter',sans-serif;font-size:18px;font-weight:700;text-align:center;outline:none;transition:border .2s}
+.input:focus{border-color:var(--purple)}
+.input::placeholder{color:var(--muted);font-weight:400}
+.gradient-text{background:linear-gradient(135deg,#a78bfa,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* JOIN */
+#screen-join h1{font-size:36px;font-weight:900;text-align:center}
+#screen-join p{color:var(--muted);text-align:center;font-size:14px;margin-top:6px}
+#screen-join label{font-size:13px;font-weight:600;color:var(--muted);display:block;margin-bottom:8px}
+.input.code{font-size:28px;letter-spacing:8px;text-transform:uppercase}
+.form-group{margin-bottom:16px}
+
+/* WAITING */
+#screen-waiting{text-align:center}
+.wait-emoji{font-size:80px;animation:bounce 1.5s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+#screen-waiting h2{font-size:28px;font-weight:800;margin-top:16px}
+#screen-waiting p{color:var(--muted);margin-top:8px}
+.wait-count{margin-top:20px;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);border-radius:12px;padding:12px 24px;font-size:16px;font-weight:700}
+
+/* QUESTION */
+#screen-question{gap:16px;justify-content:flex-start;padding-top:30px}
+.q-info{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:500px}
+.q-badge{background:rgba(124,58,237,.3);border:1px solid rgba(124,58,237,.5);border-radius:8px;padding:6px 14px;font-size:13px;font-weight:700}
+.timer-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;margin:0 16px;overflow:hidden}
+.timer-bar{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:4px;transition:width .9s linear,background .3s}
+.timer-num-sm{font-size:18px;font-weight:800;min-width:30px;text-align:right}
+.q-text-sm{font-size:20px;font-weight:800;text-align:center;width:100%;max-width:500px;line-height:1.5}
+.ans-btn{width:100%;max-width:500px;padding:18px 20px;border-radius:16px;border:2px solid transparent;font-family:'Inter',sans-serif;font-size:17px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;touch-action:manipulation}
+.ans-btn:active{transform:scale(.97)}
+.ans-btn.a{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.4);color:var(--text)}
+.ans-btn.b{background:rgba(59,130,246,.2);border-color:rgba(59,130,246,.4);color:var(--text)}
+.ans-btn.c{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.4);color:var(--text)}
+.ans-btn.d{background:rgba(245,158,11,.2);border-color:rgba(245,158,11,.4);color:var(--text)}
+.ans-btn.a:active{background:rgba(239,68,68,.5);border-color:var(--red)}
+.ans-btn.b:active{background:rgba(59,130,246,.5);border-color:#3b82f6}
+.ans-btn.c:active{background:rgba(16,185,129,.5);border-color:var(--green)}
+.ans-btn.d:active{background:rgba(245,158,11,.5);border-color:var(--yellow)}
+.ans-btn.selected{opacity:.7;cursor:default}
+.ans-lbl{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0}
+.ans-btn.a .ans-lbl{background:rgba(239,68,68,.6)}
+.ans-btn.b .ans-lbl{background:rgba(59,130,246,.6)}
+.ans-btn.c .ans-lbl{background:rgba(16,185,129,.6)}
+.ans-btn.d .ans-lbl{background:rgba(245,158,11,.6)}
+
+/* ANSWERED */
+#screen-answered{text-align:center}
+.ans-emoji{font-size:100px;margin-bottom:16px}
+#screen-answered h2{font-size:26px;font-weight:800}
+#screen-answered p{color:var(--muted);margin-top:8px}
+
+/* RESULT */
+#screen-result{text-align:center}
+.result-icon{font-size:90px;animation:popIn .4s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.result-pts{font-size:56px;font-weight:900;margin:8px 0}
+.result-pts.correct{color:var(--green)}
+.result-pts.wrong{color:var(--red)}
+#screen-result .correct-ans{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.4);border-radius:12px;padding:12px 20px;margin-top:16px;font-size:15px;font-weight:600}
+
+/* LEADERBOARD PLAYER */
+#screen-rank{text-align:center}
+.my-rank{font-size:80px;font-weight:900;background:linear-gradient(135deg,#a78bfa,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.rank-badge{background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);border-radius:16px;padding:20px 40px;margin-top:8px}
+.my-score{font-size:36px;font-weight:900;color:var(--cyan)}
+
+/* FINAL PLAYER */
+#screen-done{text-align:center}
+#screen-done .trophy{font-size:100px;animation:bounce 2s infinite}
+</style>
+</head>
+<body>
+
+<!-- JOIN -->
+<div id="screen-join" class="screen active">
+  <div style="text-align:center">
+    <h1 class="gradient-text">HCM202 QUIZ</h1>
+    <p>Nhập mã phòng và tên của bạn để tham gia</p>
+  </div>
+  <div class="card">
+    <div class="form-group">
+      <label>MÃ PHÒNG</label>
+      <input class="input code" id="inp-code" type="text" maxlength="6" placeholder="ABC123" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="form-group">
+      <label>TÊN CỦA BẠN</label>
+      <input class="input" id="inp-name" type="text" maxlength="20" placeholder="Nhập tên..." autocomplete="off">
+    </div>
+    <div id="join-error" style="color:var(--red);font-size:14px;font-weight:600;margin-bottom:12px;display:none"></div>
+    <button id="btn-join" class="btn btn-primary">Tham Gia 🎮</button>
+  </div>
+</div>
+
+<!-- WAITING -->
+<div id="screen-waiting" class="screen">
+  <div class="wait-emoji">⏳</div>
+  <h2>Đã vào phòng!</h2>
+  <p id="wait-name" style="font-size:20px;font-weight:700;color:var(--cyan)"></p>
+  <p style="color:var(--muted)">Chờ host bắt đầu game...</p>
+  <div class="wait-count pulse" id="wait-count">👥 0 người trong phòng</div>
+</div>
+
+<!-- QUESTION -->
+<div id="screen-question" class="screen">
+  <div class="q-info">
+    <span class="q-badge" id="pq-num">Câu 1</span>
+    <div class="timer-bar-wrap"><div class="timer-bar" id="p-timer-bar" style="width:100%"></div></div>
+    <span class="timer-num-sm" id="p-timer-num">20</span>
+  </div>
+  <div class="q-text-sm" id="pq-text">Đang tải câu hỏi...</div>
+  <button class="ans-btn a" id="pbtn-a" onclick="submitAnswer(0)"><span class="ans-lbl">A</span><span id="pans-a"></span></button>
+  <button class="ans-btn b" id="pbtn-b" onclick="submitAnswer(1)"><span class="ans-lbl">B</span><span id="pans-b"></span></button>
+  <button class="ans-btn c" id="pbtn-c" onclick="submitAnswer(2)"><span class="ans-lbl">C</span><span id="pans-c"></span></button>
+  <button class="ans-btn d" id="pbtn-d" onclick="submitAnswer(3)"><span class="ans-lbl">D</span><span id="pans-d"></span></button>
+</div>
+
+<!-- ANSWERED (waiting for reveal) -->
+<div id="screen-answered" class="screen">
+  <div class="ans-emoji">✅</div>
+  <h2>Đã gửi câu trả lời!</h2>
+  <p>Chờ kết quả...</p>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="result-icon" id="res-icon">🎉</div>
+  <p style="font-size:20px;font-weight:700" id="res-label">Chính xác!</p>
+  <div class="result-pts correct" id="res-pts">+850</div>
+  <p style="color:var(--muted);font-size:14px">điểm</p>
+  <div class="correct-ans" id="res-correct-ans"></div>
+</div>
+
+<!-- RANK -->
+<div id="screen-rank" class="screen">
+  <p style="color:var(--muted);font-weight:600">HẠNG CỦA BẠN</p>
+  <div class="my-rank" id="my-rank">#1</div>
+  <div class="rank-badge">
+    <div style="color:var(--muted);font-size:13px;font-weight:600">TỔNG ĐIỂM</div>
+    <div class="my-score" id="my-score">0</div>
+  </div>
+  <p class="pulse" style="color:var(--muted);font-size:14px;margin-top:16px">Chờ câu tiếp theo...</p>
+</div>
+
+<!-- DONE -->
+<div id="screen-done" class="screen">
+  <div class="trophy">🏆</div>
+  <h2 style="font-size:32px;font-weight:900" class="gradient-text">Game kết thúc!</h2>
+  <p style="color:var(--muted)">Tên của bạn</p>
+  <div class="rank-badge" style="margin-top:12px">
+    <div style="font-size:20px;font-weight:700" id="done-name"></div>
+    <div class="my-score" id="done-score">0 pts</div>
+    <div style="color:var(--muted);font-size:14px;margin-top:6px">Hạng <span id="done-rank" style="color:var(--cyan);font-weight:700">#1</span></div>
+  </div>
+  <button class="btn btn-primary" style="max-width:460px;margin-top:20px" onclick="location.href='player.html'">Chơi Lại 🔄</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDsFdz15t3kydCu-UPpAYsqzq3CnStL7og",
+  authDomain: "hcm202-d3073.firebaseapp.com",
+  projectId: "hcm202-d3073",
+  storageBucket: "hcm202-d3073.firebasestorage.app",
+  messagingSenderId: "457399707383",
+  appId: "1:457399707383:web:f346d140bebb3bfd4b15f2"
+};
+
+const QUESTIONS = [
+  {q:"Hồ Chí Minh sinh năm nào?",opts:["1888","1890","1892","1895"],ans:1,time:15},
+  {q:"Hồ Chí Minh ra đi tìm đường cứu nước từ bến cảng nào?",opts:["Hải Phòng","Đà Nẵng","Nhà Rồng (Sài Gòn)","Vũng Tàu"],ans:2,time:15},
+  {q:"Tên gọi nào KHÔNG phải của Hồ Chí Minh?",opts:["Nguyễn Ái Quốc","Nguyễn Tất Thành","Nguyễn Sinh Cung","Nguyễn Văn Luyện"],ans:3,time:20},
+  {q:"Hồ Chí Minh đọc bản Tuyên ngôn Độc lập vào ngày nào?",opts:["2/9/1945","19/8/1945","30/4/1975","7/5/1954"],ans:0,time:15},
+  {q:"Theo Hồ Chí Minh, điều gì quý giá nhất của con người?",opts:["Tiền bạc","Danh vọng","Độc lập - Tự do - Hạnh phúc","Quyền lực"],ans:2,time:20},
+  {q:"Tư tưởng Hồ Chí Minh về con người tập trung vào điều gì?",opts:["Xây dựng con người toàn diện","Ưu tiên kinh tế","Tập trung quân sự","Phát triển kỹ thuật"],ans:0,time:20},
+  {q:"Chiến dịch nào kết thúc kháng chiến chống Pháp?",opts:["Chiến dịch Hồ Chí Minh","Chiến dịch Điện Biên Phủ","Chiến dịch Biên giới","Chiến dịch Tây Nguyên"],ans:1,time:15},
+  {q:"Hồ Chí Minh mất năm nào?",opts:["1965","1967","1969","1971"],ans:2,time:15},
+  {q:"Quê hương của Hồ Chí Minh ở tỉnh nào?",opts:["Hà Tĩnh","Nghệ An","Thanh Hóa","Quảng Bình"],ans:1,time:15},
+  {q:"Đảng Cộng sản Việt Nam được thành lập năm nào?",opts:["1925","1928","1930","1935"],ans:2,time:15}
+];
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let gameId = '';
+let playerId = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+let playerName = '';
+let myScore = 0;
+let currentQ = 0;
+let answered = false;
+let myChoice = -1;
+let timerInterval = null;
+let unsubGame = null;
+
+// Expose submitAnswer globally
+window.submitAnswer = submitAnswer;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showError(msg) {
+  const el = document.getElementById('join-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// Read code from URL
+const urlParams = new URLSearchParams(location.search);
+const codeFromUrl = urlParams.get('game');
+if (codeFromUrl) document.getElementById('inp-code').value = codeFromUrl.toUpperCase();
+
+document.getElementById('btn-join').addEventListener('click', async () => {
+  const code = document.getElementById('inp-code').value.trim().toUpperCase();
+  const name = document.getElementById('inp-name').value.trim();
+  if (!code || code.length < 4) { showError('Vui lòng nhập mã phòng!'); return; }
+  if (!name) { showError('Vui lòng nhập tên của bạn!'); return; }
+
+  document.getElementById('btn-join').disabled = true;
+  document.getElementById('btn-join').textContent = 'Đang vào...';
+
+  try {
+    const gameDoc = await getDoc(doc(db, 'games', code));
+    if (!gameDoc.exists()) { showError('Mã phòng không tồn tại!'); document.getElementById('btn-join').disabled = false; document.getElementById('btn-join').textContent = 'Tham Gia 🎮'; return; }
+    const gd = gameDoc.data();
+    if (gd.status !== 'lobby') { showError('Game đã bắt đầu, không thể vào!'); document.getElementById('btn-join').disabled = false; document.getElementById('btn-join').textContent = 'Tham Gia 🎮'; return; }
+
+    gameId = code;
+    playerName = name;
+    await setDoc(doc(db, 'games', gameId, 'players', playerId), { name, score: 0, joinedAt: Date.now() });
+    showScreen('screen-waiting');
+    document.getElementById('wait-name').textContent = name;
+    listenGame();
+    listenPlayerCount();
+  } catch(e) {
+    showError('Lỗi kết nối: ' + e.message);
+    document.getElementById('btn-join').disabled = false;
+    document.getElementById('btn-join').textContent = 'Tham Gia 🎮';
+  }
+});
+
+function listenPlayerCount() {
+  onSnapshot(collection(db, 'games', gameId, 'players'), snap => {
+    document.getElementById('wait-count').textContent = `👥 ${snap.size} người trong phòng`;
+  });
+}
+
+function listenGame() {
+  if (unsubGame) unsubGame();
+  unsubGame = onSnapshot(doc(db, 'games', gameId), snap => {
+    if (!snap.exists()) return;
+    const data = snap.data();
+    handleGameState(data);
+  });
+}
+
+async function handleGameState(data) {
+  const { status, currentQuestion, questionStartTime, correctAnswer } = data;
+  
+  if (status === 'lobby') {
+    showScreen('screen-waiting');
+  } else if (status === 'question') {
+    if (currentQuestion !== currentQ || !answered) {
+      currentQ = currentQuestion;
+      answered = false;
+      myChoice = -1;
+      showQuestion(currentQ, questionStartTime);
+    }
+  } else if (status === 'reveal') {
+    clearInterval(timerInterval);
+    if (!answered) { answered = true; myChoice = -1; }
+    showResult(correctAnswer, myChoice, currentQ);
+  } else if (status === 'leaderboard') {
+    await refreshMyScore();
+    showRank();
+  } else if (status === 'ended') {
+    await refreshMyScore();
+    showDone();
+  }
+}
+
+function showQuestion(qIdx, startTime) {
+  clearInterval(timerInterval);
+  const q = QUESTIONS[qIdx];
+  showScreen('screen-question');
+  document.getElementById('pq-num').textContent = `Câu ${qIdx+1}/${QUESTIONS.length}`;
+  document.getElementById('pq-text').textContent = q.q;
+  ['a','b','c','d'].forEach((l,i) => document.getElementById('pans-'+l).textContent = q.opts[i]);
+  ['pbtn-a','pbtn-b','pbtn-c','pbtn-d'].forEach(id => {
+    const btn = document.getElementById(id);
+    btn.disabled = false;
+    btn.classList.remove('selected');
+    btn.style.opacity = '1';
+  });
+
+  const duration = q.time;
+  const bar = document.getElementById('p-timer-bar');
+  const num = document.getElementById('p-timer-num');
+  timerInterval = setInterval(() => {
+    const elapsed = (Date.now() - startTime) / 1000;
+    const rem = Math.max(0, duration - elapsed);
+    const pct = (rem / duration) * 100;
+    bar.style.width = pct + '%';
+    bar.style.background = pct > 50 ? 'linear-gradient(90deg,var(--cyan),var(--purple))' : pct > 25 ? 'linear-gradient(90deg,var(--yellow),var(--red))' : 'var(--red)';
+    num.textContent = Math.ceil(rem);
+    if (rem <= 0) clearInterval(timerInterval);
+  }, 200);
+}
+
+async function submitAnswer(choice) {
+  if (answered) return;
+  answered = true;
+  myChoice = choice;
+  clearInterval(timerInterval);
+
+  const q = QUESTIONS[currentQ];
+  ['pbtn-a','pbtn-b','pbtn-c','pbtn-d'].forEach(id => {
+    document.getElementById(id).disabled = true;
+    document.getElementById(id).style.opacity = '0.5';
+  });
+
+  await setDoc(doc(db, 'games', gameId, 'answers', playerId), {
+    choice,
+    questionIndex: currentQ,
+    answeredAt: Date.now(),
+    startTime: Date.now() - 100 // approximate
+  });
+
+  showScreen('screen-answered');
+}
+
+function showResult(correctAnswer, myChoice, qIdx) {
+  showScreen('screen-result');
+  const q = QUESTIONS[qIdx];
+  const isCorrect = myChoice === correctAnswer;
+  const letters = ['A','B','C','D'];
+  
+  document.getElementById('res-icon').textContent = isCorrect ? '🎉' : '😢';
+  document.getElementById('res-label').textContent = isCorrect ? 'Chính xác!' : (myChoice === -1 ? 'Hết giờ!' : 'Sai rồi!');
+  
+  const ptsEl = document.getElementById('res-pts');
+  ptsEl.className = 'result-pts ' + (isCorrect ? 'correct' : 'wrong');
+  ptsEl.textContent = isCorrect ? '+???' : '+0';
+  
+  document.getElementById('res-correct-ans').textContent = `✅ Đáp án đúng: ${letters[correctAnswer]}. ${q.opts[correctAnswer]}`;
+}
+
+async function refreshMyScore() {
+  const snap = await getDoc(doc(db, 'games', gameId, 'players', playerId));
+  if (snap.exists()) myScore = snap.data().score || 0;
+}
+
+async function showRank() {
+  showScreen('screen-rank');
+  const snap = await getDoc(doc(db, 'games', gameId, 'players', playerId));
+  const allSnap = await import("https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js").then(m => m.getDocs(collection(db, 'games', gameId, 'players')));
+  const all = [];
+  allSnap.forEach(d => all.push(d.data()));
+  all.sort((a,b) => (b.score||0) - (a.score||0));
+  const rank = all.findIndex(p => p.name === playerName) + 1;
+  document.getElementById('my-rank').textContent = '#' + rank;
+  document.getElementById('my-score').textContent = myScore + ' pts';
+}
+
+async function showDone() {
+  showScreen('screen-done');
+  const { getDocs: gd2 } = await import("https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js");
+  const allSnap = await gd2(collection(db, 'games', gameId, 'players'));
+  const all = [];
+  allSnap.forEach(d => all.push(d.data()));
+  all.sort((a,b) => (b.score||0) - (a.score||0));
+  const rank = all.findIndex(p => p.name === playerName) + 1;
+  document.getElementById('done-name').textContent = playerName;
+  document.getElementById('done-score').textContent = myScore + ' pts';
+  document.getElementById('done-rank').textContent = '#' + rank;
+}
+
+// Auto-fill from URL
+if (codeFromUrl) document.getElementById('inp-name').focus();
+</script>
+</body>
+</html>

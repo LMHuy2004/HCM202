@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HCM202 Quiz — Host</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#07071a;--glass:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.1);--purple:#7c3aed;--cyan:#06b6d4;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--text:#f1f5f9;--muted:#94a3b8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 70% at 10% 10%,rgba(124,58,237,.2) 0%,transparent 60%),radial-gradient(ellipse 70% 70% at 90% 90%,rgba(6,182,212,.15) 0%,transparent 60%);pointer-events:none;z-index:0}
+.screen{display:none;min-height:100vh;padding:30px 20px;position:relative;z-index:1}
+.screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+.card{background:var(--glass);border:1px solid var(--border);border-radius:20px;backdrop-filter:blur(20px);padding:24px}
+.btn{padding:14px 32px;border-radius:12px;border:none;font-family:'Inter',sans-serif;font-weight:700;font-size:16px;cursor:pointer;transition:all .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--cyan));color:#fff;box-shadow:0 8px 30px rgba(124,58,237,.4)}
+.btn-green{background:linear-gradient(135deg,#059669,var(--green));color:#fff;box-shadow:0 8px 30px rgba(16,185,129,.4)}
+.gradient-text{background:linear-gradient(135deg,#a78bfa,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* LOBBY */
+#screen-lobby .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%;max-width:960px}
+@media(max-width:700px){#screen-lobby .grid{grid-template-columns:1fr}}
+.room-code{font-size:72px;font-weight:900;letter-spacing:8px;text-align:center;background:linear-gradient(135deg,#a78bfa,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.qr-wrap{display:flex;justify-content:center;padding:16px;background:#fff;border-radius:16px;display:inline-block}
+#player-list{display:flex;flex-wrap:wrap;gap:10px;max-height:280px;overflow-y:auto}
+.player-tag{background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);border-radius:8px;padding:8px 14px;font-size:14px;font-weight:600;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* QUESTION HOST VIEW */
+#screen-question{gap:20px}
+.q-header{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:1000px}
+.q-number{font-size:14px;color:var(--muted);font-weight:600}
+.timer-circle{width:80px;height:80px;position:relative}
+.timer-circle svg{transform:rotate(-90deg)}
+.timer-circle .track{fill:none;stroke:rgba(255,255,255,.1);stroke-width:6}
+.timer-circle .prog{fill:none;stroke:var(--cyan);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s}
+.timer-circle .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800}
+.q-text{font-size:28px;font-weight:800;text-align:center;max-width:900px;line-height:1.4}
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;max-width:900px}
+@media(max-width:600px){.ans-grid{grid-template-columns:1fr}}
+.ans-box{padding:20px 24px;border-radius:16px;font-size:18px;font-weight:700;display:flex;align-items:center;gap:12px}
+.ans-box.a{background:rgba(239,68,68,.25);border:2px solid rgba(239,68,68,.5)}
+.ans-box.b{background:rgba(59,130,246,.25);border:2px solid rgba(59,130,246,.5)}
+.ans-box.c{background:rgba(16,185,129,.25);border:2px solid rgba(16,185,129,.5)}
+.ans-box.d{background:rgba(245,158,11,.25);border:2px solid rgba(245,158,11,.5)}
+.ans-box.correct{outline:3px solid var(--green);box-shadow:0 0 30px rgba(16,185,129,.4)}
+.ans-label{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;flex-shrink:0}
+.ans-box.a .ans-label{background:rgba(239,68,68,.6)}
+.ans-box.b .ans-label{background:rgba(59,130,246,.6)}
+.ans-box.c .ans-label{background:rgba(16,185,129,.6)}
+.ans-box.d .ans-label{background:rgba(245,158,11,.6)}
+.answer-count{text-align:center;color:var(--muted);font-size:14px;font-weight:600}
+
+/* LEADERBOARD */
+#screen-leaderboard{gap:20px}
+.lb-list{width:100%;max-width:700px;display:flex;flex-direction:column;gap:10px}
+.lb-item{display:flex;align-items:center;gap:16px;padding:14px 20px;border-radius:14px;background:var(--glass);border:1px solid var(--border);transition:all .5s ease;animation:slideIn .4s ease}
+@keyframes slideIn{from{transform:translateX(-30px);opacity:0}to{transform:translateX(0);opacity:1}}
+.lb-rank{font-size:22px;font-weight:900;width:40px;text-align:center}
+.lb-rank.r1{color:#ffd700}
+.lb-rank.r2{color:#c0c0c0}
+.lb-rank.r3{color:#cd7f32}
+.lb-name{flex:1;font-size:18px;font-weight:700}
+.lb-score{font-size:20px;font-weight:800;color:var(--cyan)}
+
+/* FINAL */
+#screen-final .podium{display:flex;align-items:flex-end;justify-content:center;gap:16px;margin:20px 0}
+.pod-box{text-align:center;border-radius:16px 16px 0 0;padding:16px 24px;min-width:130px}
+.pod-1{background:linear-gradient(135deg,rgba(255,215,0,.3),rgba(255,215,0,.1));border:2px solid rgba(255,215,0,.5);height:200px}
+.pod-2{background:linear-gradient(135deg,rgba(192,192,192,.3),rgba(192,192,192,.1));border:2px solid rgba(192,192,192,.5);height:160px}
+.pod-3{background:linear-gradient(135deg,rgba(205,127,50,.3),rgba(205,127,50,.1));border:2px solid rgba(205,127,50,.5);height:130px}
+.pod-emoji{font-size:40px}
+.pod-name{font-size:14px;font-weight:700;margin-top:8px}
+.pod-score{font-size:18px;font-weight:900;color:var(--cyan)}
+</style>
+</head>
+<body>
+
+<!-- LOBBY -->
+<div id="screen-lobby" class="screen active">
+  <div style="text-align:center">
+    <h1 style="font-size:48px;font-weight:900" class="gradient-text">HCM202 QUIZ</h1>
+    <p style="color:var(--muted);margin-top:8px">Màn hình Host — Chiếu lên máy chiếu</p>
+  </div>
+  <div class="grid">
+    <div class="card" style="text-align:center">
+      <p style="color:var(--muted);font-size:13px;font-weight:600;margin-bottom:8px">MÃ PHÒNG</p>
+      <div class="room-code" id="room-code">------</div>
+      <p style="color:var(--muted);font-size:13px;margin-top:12px">Nhập tại <strong style="color:var(--cyan)" id="player-url">...</strong></p>
+      <div style="margin-top:16px;display:flex;justify-content:center">
+        <div class="qr-wrap"><div id="qr-code"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <p style="font-weight:700">Người chơi</p>
+        <span id="player-count" style="background:rgba(124,58,237,.3);border:1px solid rgba(124,58,237,.5);border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700">0 người</span>
+      </div>
+      <div id="player-list"><p style="color:var(--muted);font-size:14px">Chờ người chơi tham gia...</p></div>
+      <div style="margin-top:20px">
+        <button id="btn-start" class="btn btn-green" style="width:100%;font-size:18px;padding:18px" disabled>🚀 Bắt Đầu Game</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUESTION (HOST VIEW) -->
+<div id="screen-question" class="screen">
+  <div class="q-header">
+    <span class="q-number" id="q-number">Câu 1/10</span>
+    <div class="timer-circle">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle class="track" cx="40" cy="40" r="34"/>
+        <circle class="prog" id="timer-ring" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-circle num" id="timer-num">20</div>
+    </div>
+  </div>
+  <div class="q-text" id="q-text">Câu hỏi đang tải...</div>
+  <div class="ans-grid" id="ans-grid">
+    <div class="ans-box a"><span class="ans-label">A</span><span id="ans-a"></span></div>
+    <div class="ans-box b"><span class="ans-label">B</span><span id="ans-b"></span></div>
+    <div class="ans-box c"><span class="ans-label">C</span><span id="ans-c"></span></div>
+    <div class="ans-box d"><span class="ans-label">D</span><span id="ans-d"></span></div>
+  </div>
+  <p class="answer-count" id="answer-count">0 người đã trả lời</p>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="screen-leaderboard" class="screen">
+  <h2 style="font-size:36px;font-weight:900" class="gradient-text" id="lb-title">🏆 Bảng Xếp Hạng</h2>
+  <div class="lb-list" id="lb-list"></div>
+  <div style="display:flex;gap:16px;margin-top:10px">
+    <button id="btn-next" class="btn btn-primary" style="font-size:18px;padding:16px 40px">Câu Tiếp ▶</button>
+    <button id="btn-end" class="btn" style="background:rgba(239,68,68,.2);color:var(--red);border:1px solid rgba(239,68,68,.3);font-size:16px">Kết thúc</button>
+  </div>
+</div>
+
+<!-- FINAL -->
+<div id="screen-final" class="screen">
+  <h1 style="font-size:48px;font-weight:900" class="gradient-text">🎉 Game Over!</h1>
+  <p style="color:var(--muted)">Kết quả cuối cùng</p>
+  <div class="podium" id="podium"></div>
+  <button id="btn-new" class="btn btn-primary" style="margin-top:10px">Chơi Lại</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+import { getFirestore, doc, setDoc, collection, onSnapshot, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDsFdz15t3kydCu-UPpAYsqzq3CnStL7og",
+  authDomain: "hcm202-d3073.firebaseapp.com",
+  projectId: "hcm202-d3073",
+  storageBucket: "hcm202-d3073.firebasestorage.app",
+  messagingSenderId: "457399707383",
+  appId: "1:457399707383:web:f346d140bebb3bfd4b15f2"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const QUESTIONS = [
+  {q:"Hồ Chí Minh sinh năm nào?",opts:["1888","1890","1892","1895"],ans:1,time:15},
+  {q:"Hồ Chí Minh ra đi tìm đường cứu nước từ bến cảng nào?",opts:["Hải Phòng","Đà Nẵng","Nhà Rồng (Sài Gòn)","Vũng Tàu"],ans:2,time:15},
+  {q:"Tên gọi nào KHÔNG phải của Hồ Chí Minh?",opts:["Nguyễn Ái Quốc","Nguyễn Tất Thành","Nguyễn Sinh Cung","Nguyễn Văn Luyện"],ans:3,time:20},
+  {q:"Hồ Chí Minh đọc bản Tuyên ngôn Độc lập vào ngày nào?",opts:["2/9/1945","19/8/1945","30/4/1975","7/5/1954"],ans:0,time:15},
+  {q:"Theo Hồ Chí Minh, điều gì quý giá nhất của con người?",opts:["Tiền bạc","Danh vọng","Độc lập - Tự do - Hạnh phúc","Quyền lực"],ans:2,time:20},
+  {q:"Tư tưởng Hồ Chí Minh về con người tập trung vào điều gì?",opts:["Xây dựng con người toàn diện","Ưu tiên kinh tế","Tập trung quân sự","Phát triển kỹ thuật"],ans:0,time:20},
+  {q:"Chiến dịch nào kết thúc kháng chiến chống Pháp?",opts:["Chiến dịch Hồ Chí Minh","Chiến dịch Điện Biên Phủ","Chiến dịch Biên giới","Chiến dịch Tây Nguyên"],ans:1,time:15},
+  {q:"Hồ Chí Minh mất năm nào?",opts:["1965","1967","1969","1971"],ans:2,time:15},
+  {q:"Quê hương của Hồ Chí Minh ở tỉnh nào?",opts:["Hà Tĩnh","Nghệ An","Thanh Hóa","Quảng Bình"],ans:1,time:15},
+  {q:"Đảng Cộng sản Việt Nam được thành lập năm nào?",opts:["1925","1928","1930","1935"],ans:2,time:15}
+];
+
+let gameId = '';
+let currentQ = 0;
+let timerInterval = null;
+let unsubPlayers = null;
+let unsubGame = null;
+let players = {};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function genCode() {
+  return Math.random().toString(36).substring(2,8).toUpperCase();
+}
+
+async function initGame() {
+  gameId = genCode();
+  const playerUrl = `${location.origin}${location.pathname.replace('host.html','player.html')}?game=${gameId}`;
+  
+  document.getElementById('room-code').textContent = gameId;
+  document.getElementById('player-url').textContent = location.hostname === 'localhost' ? location.host + '/player.html' : location.hostname + '/player.html';
+  
+  new QRCode(document.getElementById('qr-code'), {text: playerUrl, width:160, height:160, colorDark:'#000', colorLight:'#fff'});
+
+  await setDoc(doc(db, 'games', gameId), {
+    status: 'lobby',
+    currentQuestion: 0,
+    questionStartTime: 0,
+    totalQuestions: QUESTIONS.length,
+    createdAt: Date.now()
+  });
+
+  unsubPlayers = onSnapshot(collection(db, 'games', gameId, 'players'), snap => {
+    players = {};
+    snap.forEach(d => players[d.id] = d.data());
+    renderPlayerList();
+  });
+}
+
+function renderPlayerList() {
+  const list = document.getElementById('player-list');
+  const count = Object.keys(players).length;
+  document.getElementById('player-count').textContent = count + ' người';
+  document.getElementById('btn-start').disabled = count === 0;
+  if (count === 0) { list.innerHTML = '<p style="color:var(--muted);font-size:14px">Chờ người chơi tham gia...</p>'; return; }
+  list.innerHTML = Object.values(players).map(p => `<div class="player-tag">👤 ${p.name}</div>`).join('');
+}
+
+async function startGame() {
+  currentQ = 0;
+  await showQuestion();
+}
+
+async function showQuestion() {
+  const q = QUESTIONS[currentQ];
+  showScreen('screen-question');
+  document.getElementById('q-number').textContent = `Câu ${currentQ+1}/${QUESTIONS.length}`;
+  document.getElementById('q-text').textContent = q.q;
+  ['a','b','c','d'].forEach((l,i) => document.getElementById('ans-'+l).textContent = q.opts[i]);
+  document.querySelectorAll('.ans-box').forEach(b => b.classList.remove('correct'));
+  document.getElementById('answer-count').textContent = '0 người đã trả lời';
+
+  const startTime = Date.now();
+  await updateDoc(doc(db, 'games', gameId), {
+    status: 'question',
+    currentQuestion: currentQ,
+    questionStartTime: startTime
+  });
+
+  startTimer(q.time, startTime);
+  listenAnswers(startTime, q.time);
+}
+
+function startTimer(duration, startTime) {
+  clearInterval(timerInterval);
+  const ring = document.getElementById('timer-ring');
+  const numEl = document.getElementById('timer-num');
+  const circ = 213.6;
+  timerInterval = setInterval(async () => {
+    const elapsed = (Date.now() - startTime) / 1000;
+    const remaining = Math.max(0, duration - elapsed);
+    const pct = remaining / duration;
+    ring.style.strokeDashoffset = circ * (1 - pct);
+    ring.style.stroke = remaining > duration*0.5 ? 'var(--cyan)' : remaining > duration*0.25 ? 'var(--yellow)' : 'var(--red)';
+    numEl.textContent = Math.ceil(remaining);
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      await revealAnswer();
+    }
+  }, 200);
+}
+
+let unsubAnswers = null;
+function listenAnswers(startTime, duration) {
+  if (unsubAnswers) unsubAnswers();
+  unsubAnswers = onSnapshot(collection(db, 'games', gameId, 'answers'), snap => {
+    const count = snap.size;
+    const total = Object.keys(players).length;
+    document.getElementById('answer-count').textContent = `${count}/${total} người đã trả lời`;
+  });
+}
+
+async function revealAnswer() {
+  if (unsubAnswers) { unsubAnswers(); unsubAnswers = null; }
+  const q = QUESTIONS[currentQ];
+  const letters = ['a','b','c','d'];
+  document.querySelectorAll('.ans-box')[q.ans].classList.add('correct');
+  
+  await updateDoc(doc(db, 'games', gameId), { status: 'reveal', correctAnswer: q.ans });
+  await calcScores();
+  setTimeout(showLeaderboard, 2000);
+}
+
+async function calcScores() {
+  const q = QUESTIONS[currentQ];
+  const snap = await getDocs(collection(db, 'games', gameId, 'answers'));
+  const updates = [];
+  snap.forEach(d => {
+    const a = d.data();
+    if (a.choice === q.ans) {
+      const timePct = Math.max(0, 1 - (a.answeredAt - a.startTime) / (q.time * 1000));
+      const pts = Math.round(500 + 500 * timePct);
+      const p = players[d.id] || {};
+      updates.push(setDoc(doc(db, 'games', gameId, 'players', d.id), { ...p, score: (p.score||0) + pts }, { merge: true }));
+    }
+    updates.push(deleteDoc(doc(db, 'games', gameId, 'answers', d.id)));
+  });
+  await Promise.all(updates);
+}
+
+async function showLeaderboard() {
+  const isLast = currentQ >= QUESTIONS.length - 1;
+  showScreen('screen-leaderboard');
+  document.getElementById('lb-title').textContent = isLast ? '🏆 Kết Quả Cuối Cùng' : `🏆 Bảng Xếp Hạng — Sau câu ${currentQ+1}`;
+  document.getElementById('btn-next').style.display = isLast ? 'none' : 'inline-block';
+  document.getElementById('btn-end').textContent = isLast ? '🎉 Xem Podium' : 'Kết thúc sớm';
+  await updateDoc(doc(db, 'games', gameId), { status: 'leaderboard' });
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  const sorted = Object.entries(players).sort((a,b) => (b[1].score||0) - (a[1].score||0)).slice(0,10);
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('lb-list').innerHTML = sorted.map(([id,p],i) =>
+    `<div class="lb-item">
+      <span class="lb-rank ${i<3?'r'+(i+1):''}">${medals[i]||i+1}</span>
+      <span class="lb-name">${p.name}</span>
+      <span class="lb-score">${p.score||0} pts</span>
+    </div>`
+  ).join('');
+}
+
+function showFinal() {
+  showScreen('screen-final');
+  updateDoc(doc(db, 'games', gameId), { status: 'ended' });
+  const sorted = Object.entries(players).sort((a,b) => (b[1].score||0) - (a[1].score||0));
+  const top3 = [sorted[1], sorted[0], sorted[2]].filter(Boolean);
+  const classes = ['pod-2','pod-1','pod-3'];
+  const emojis = ['🥈','🥇','🥉'];
+  document.getElementById('podium').innerHTML = top3.map(([id,p],i) =>
+    `<div class="pod-box ${classes[i]}" style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:20px">
+      <div class="pod-emoji">${emojis[i]}</div>
+      <div class="pod-name">${p.name}</div>
+      <div class="pod-score">${p.score||0}</div>
+    </div>`
+  ).join('');
+}
+
+// Events
+document.getElementById('btn-start').addEventListener('click', startGame);
+document.getElementById('btn-next').addEventListener('click', async () => {
+  currentQ++;
+  await showQuestion();
+});
+document.getElementById('btn-end').addEventListener('click', () => {
+  clearInterval(timerInterval);
+  if (currentQ >= QUESTIONS.length - 1) showFinal();
+  else showFinal();
+});
+document.getElementById('btn-new').addEventListener('click', () => location.reload());
+
+// Init
+initGame();
+</script>
+</body>
+</html>
