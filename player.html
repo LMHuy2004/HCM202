@@ -88,9 +88,21 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 /* FINAL PLAYER */
 #screen-done{text-align:center}
 #screen-done .trophy{font-size:100px;animation:bounce 2s infinite}
+
+/* Back button */
+.back-btn{position:fixed;top:18px;left:18px;z-index:9999;display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:50px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#f1f5f9;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;text-decoration:none;backdrop-filter:blur(12px);transition:all .25s ease;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+.back-btn:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);transform:translateX(-3px);box-shadow:0 6px 24px rgba(0,0,0,.5)}
+.back-btn-arrow{transition:transform .25s ease}
+.back-btn:hover .back-btn-arrow{transform:translateX(-4px)}
 </style>
 </head>
 <body>
+
+<!-- BACK BUTTON -->
+<a href="index.html#minigame" class="back-btn" id="btn-back-home">
+  <span class="back-btn-arrow">←</span>
+  <span>Về trang chủ</span>
+</a>
 
 <!-- JOIN -->
 <div id="screen-join" class="screen active">

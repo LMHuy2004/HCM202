@@ -22,7 +22,6 @@
     <a href="#apply">Vận dụng</a>
     <a href="#lessons">Bài học</a>
     <a href="#minigame">🎮 Minigame</a>
-    <a href="#leaderboard">🏆 Xếp hạng</a>
   </div>
 </nav>
 
@@ -146,101 +145,58 @@
   </div>
 </section>
 
-<!-- ========== QR CODE + MINIGAME ========== -->
+<!-- ========== MINIGAME HUB ========== -->
 <section class="section" id="minigame">
   <span class="section-number">🎮</span>
   <p class="section-label fade-in">Tương tác</p>
   <h2 class="section-title fade-in">🎮 Minigame — Ai Hiểu Bác Hơn?</h2>
-  <p class="section-desc fade-in">Quét mã QR hoặc nhập link để tham gia. Trả lời 10 câu hỏi nhanh và chính xác nhất!</p>
+  <p class="section-desc fade-in">Trả lời 10 câu hỏi thật nhanh và chính xác! Chọn vai trò của bạn để bắt đầu.</p>
 
-  <!-- QR Code Box -->
-  <div class="qr-box fade-in" id="qrBox">
-    <div class="qr-inner">
-      <div id="qrcode"></div>
-      <p class="qr-url" id="qrUrl">Đang tải...</p>
-      <p class="qr-hint">📱 Quét mã bằng điện thoại để tham gia</p>
-    </div>
-  </div>
-
-  <!-- Game Container -->
-  <div class="game-container fade-in" id="gameContainer">
-    <!-- Step 1: Enter Name -->
-    <div id="gameIntro">
-      <div class="game-header"><h3 style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:8px;">Sẵn sàng chưa?</h3><p style="color:var(--text-muted);margin-bottom:24px;">Nhập tên của bạn và bắt đầu thử thách!</p></div>
-      <div class="name-input-group">
-        <input type="text" id="playerName" class="name-input" placeholder="Nhập tên của bạn..." maxlength="20" autocomplete="off">
-        <button class="btn-start" id="btnStart" onclick="startGame()">Bắt đầu 🚀</button>
+  <div class="game-hub fade-in">
+    <!-- HOST CARD -->
+    <div class="hub-card hub-host">
+      <div class="hub-icon-wrap">
+        <span class="hub-icon">🖥️</span>
+        <div class="hub-icon-glow glow-purple"></div>
       </div>
+      <h3 class="hub-title">Host / Trình chiếu</h3>
+      <p class="hub-desc">Dành cho người dẫn chương trình. Mở phòng chơi, chiếu câu hỏi lên màn hình lớn và xem bảng xếp hạng trực tiếp.</p>
+      <ul class="hub-features">
+        <li>✦ Tạo phòng & mã QR tự động</li>
+        <li>✦ Hiển thị câu hỏi lên màn chiếu</li>
+        <li>✦ Bảng xếp hạng real-time</li>
+      </ul>
+      <a href="host.html" id="btn-go-host" class="hub-btn hub-btn-purple">
+        <span>Mở Host</span>
+        <span class="hub-btn-arrow">→</span>
+      </a>
     </div>
 
-    <!-- Step 2: Quiz -->
-    <div id="gameArea" style="display:none;">
-      <div class="game-header">
-        <div class="game-timer" id="gameTimer">
-          <span class="timer-icon">⏱️</span>
-          <span class="timer-value" id="timerValue">00:00</span>
-        </div>
-        <div class="game-progress" id="gameProgress"></div>
-        <div class="game-score">Điểm: <span id="gameScore">0</span> / <span id="gameTotalQ">10</span></div>
+    <!-- DIVIDER -->
+    <div class="hub-divider">
+      <div class="hub-divider-line"></div>
+      <span class="hub-divider-text">hoặc</span>
+      <div class="hub-divider-line"></div>
+    </div>
+
+    <!-- PLAYER CARD -->
+    <div class="hub-card hub-player">
+      <div class="hub-icon-wrap">
+        <span class="hub-icon">📱</span>
+        <div class="hub-icon-glow glow-cyan"></div>
       </div>
-      <p class="game-question-num" id="gameQNum"></p>
-      <p class="game-question" id="gameQuestion"></p>
-      <div class="game-options" id="gameOptions"></div>
-      <div class="game-explanation" id="gameExplanation"></div>
-      <div style="text-align:center;">
-        <button class="game-next" id="gameNext" onclick="nextQuestion()">Câu tiếp theo →</button>
-      </div>
+      <h3 class="hub-title">Tham gia chơi</h3>
+      <p class="hub-desc">Dành cho người chơi. Nhập mã phòng từ host hoặc quét QR, nhập tên và chiến đấu!</p>
+      <ul class="hub-features">
+        <li>✦ Nhập mã phòng / quét QR</li>
+        <li>✦ Trả lời trên điện thoại</li>
+        <li>✦ Xem hạng sau mỗi câu hỏi</li>
+      </ul>
+      <a href="player.html" id="btn-go-player" class="hub-btn hub-btn-cyan">
+        <span>Tham gia ngay</span>
+        <span class="hub-btn-arrow">→</span>
+      </a>
     </div>
-
-    <!-- Step 3: Result -->
-    <div class="game-result" id="gameResult">
-      <div class="game-result-icon" id="resultIcon"></div>
-      <h3 class="game-result-title" id="resultTitle"></h3>
-      <p class="game-result-score" id="resultScore"></p>
-      <p class="game-result-time" id="resultTime"></p>
-      <p class="game-result-msg" id="resultMsg"></p>
-      <button class="game-restart" onclick="restartGame()">🔄 Chơi lại</button>
-    </div>
-  </div>
-</section>
-
-<!-- ========== LEADERBOARD ========== -->
-<section class="section" id="leaderboard">
-  <span class="section-number">🏆</span>
-  <p class="section-label fade-in">Bảng xếp hạng</p>
-  <h2 class="section-title fade-in">🏆 Top Cao Thủ</h2>
-  <p class="section-desc fade-in">3 người chơi có điểm cao nhất và nhanh nhất sẽ vinh danh tại đây!</p>
-
-  <!-- Podium -->
-  <div class="podium fade-in" id="podium">
-    <div class="podium-item podium-2" id="podium2">
-      <div class="podium-avatar">🥈</div>
-      <p class="podium-name">---</p>
-      <p class="podium-score-text">--</p>
-      <div class="podium-bar bar-2"><span>2</span></div>
-    </div>
-    <div class="podium-item podium-1" id="podium1">
-      <div class="podium-crown">👑</div>
-      <div class="podium-avatar">🥇</div>
-      <p class="podium-name">---</p>
-      <p class="podium-score-text">--</p>
-      <div class="podium-bar bar-1"><span>1</span></div>
-    </div>
-    <div class="podium-item podium-3" id="podium3">
-      <div class="podium-avatar">🥉</div>
-      <p class="podium-name">---</p>
-      <p class="podium-score-text">--</p>
-      <div class="podium-bar bar-3"><span>3</span></div>
-    </div>
-  </div>
-
-  <!-- Full list -->
-  <div class="lb-list fade-in" id="lbList">
-    <p class="lb-empty" id="lbEmpty">Chưa có ai tham gia. Hãy là người đầu tiên! 🎯</p>
-  </div>
-
-  <div style="text-align:center;margin-top:30px;" class="fade-in">
-    <button class="game-restart" onclick="resetLeaderboard()" style="font-size:0.85rem;padding:10px 24px;">🗑️ Reset bảng xếp hạng</button>
   </div>
 </section>
 
