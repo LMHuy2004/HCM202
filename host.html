@@ -296,15 +296,18 @@ async function startGame() {
 }
 
 function runCountdown() {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
+    const countdownStart = Date.now();
+    // Push to Firestore so players see countdown on their screens
+    await updateDoc(doc(db, 'games', gameId), { status: 'countdown', countdownStart });
+
     const overlay = document.getElementById('countdown-overlay');
     const numEl = document.getElementById('countdown-num');
     const lblEl = document.getElementById('countdown-label');
     overlay.classList.add('active');
     let count = 3;
     numEl.textContent = count;
-    numEl.style.animation = 'none';
-    void numEl.offsetWidth;
+    numEl.style.animation = 'none'; void numEl.offsetWidth;
     numEl.style.animation = 'countPulse .9s ease-out';
     const t = setInterval(() => {
       count--;
@@ -312,14 +315,12 @@ function runCountdown() {
         clearInterval(t);
         lblEl.textContent = 'Bắt đầu!';
         numEl.textContent = '🔥';
-        numEl.style.animation = 'none';
-        void numEl.offsetWidth;
+        numEl.style.animation = 'none'; void numEl.offsetWidth;
         numEl.style.animation = 'countPulse .5s ease-out';
         setTimeout(() => { overlay.classList.remove('active'); lblEl.textContent = 'Chuẩn bị!'; resolve(); }, 600);
       } else {
         numEl.textContent = count;
-        numEl.style.animation = 'none';
-        void numEl.offsetWidth;
+        numEl.style.animation = 'none'; void numEl.offsetWidth;
         numEl.style.animation = 'countPulse .9s ease-out';
       }
     }, 1000);

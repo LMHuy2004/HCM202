@@ -42,6 +42,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .wait-player-tag{background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:600;animation:popIn .3s ease}
 @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
 
+/* COUNTDOWN SCREEN (Player) */
+#screen-countdown{text-align:center;gap:8px}
+.cd-num{font-size:150px;font-weight:900;line-height:1;background:linear-gradient(135deg,#a78bfa,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.cd-num.animate{animation:cdPulse .8s ease-out}
+@keyframes cdPulse{0%{transform:scale(1.5);opacity:.3}100%{transform:scale(1);opacity:1}}
+.cd-label{font-size:18px;font-weight:700;color:var(--muted)}
+
 /* QUESTION */
 #screen-question{gap:16px;justify-content:flex-start;padding-top:30px}
 .q-info{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:500px}
@@ -141,6 +148,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="wait-players-list" id="wait-players"></div>
 </div>
 
+<!-- COUNTDOWN (Player) -->
+<div id="screen-countdown" class="screen">
+  <div class="cd-num" id="cd-num">3</div>
+  <div class="cd-label">Chuẩn bị trả lời!</div>
+</div>
+
 <!-- QUESTION -->
 <div id="screen-question" class="screen">
   <div class="q-info">
@@ -223,6 +236,7 @@ let currentQ = 0;
 let answered = false;
 let myChoice = -1;
 let timerInterval = null;
+let cdInterval = null;
 let unsubGame = null;
 let currentQData = null; // stores {q, opts, time, total} from Firebase
 
@@ -298,6 +312,24 @@ async function handleGameState(data) {
   
   if (status === 'lobby') {
     showScreen('screen-waiting');
+  } else if (status === 'countdown') {
+    showScreen('screen-countdown');
+    if (cdInterval) clearInterval(cdInterval);
+    const cdStart = data.countdownStart || Date.now();
+    const numEl = document.getElementById('cd-num');
+    const updateCd = () => {
+      const rem = Math.max(0, 3 - (Date.now() - cdStart) / 1000);
+      const val = rem > 0 ? Math.ceil(rem) : '🔥';
+      if (numEl.textContent !== String(val)) {
+        numEl.textContent = val;
+        numEl.classList.remove('animate');
+        void numEl.offsetWidth;
+        numEl.classList.add('animate');
+      }
+      if (rem <= 0) clearInterval(cdInterval);
+    };
+    updateCd();
+    cdInterval = setInterval(updateCd, 100);
   } else if (status === 'question') {
     if (currentQuestion !== currentQ || !answered) {
       currentQ = currentQuestion;
