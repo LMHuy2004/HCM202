@@ -38,6 +38,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 #screen-waiting h2{font-size:28px;font-weight:800;margin-top:16px}
 #screen-waiting p{color:var(--muted);margin-top:8px}
 .wait-count{margin-top:20px;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);border-radius:12px;padding:12px 24px;font-size:16px;font-weight:700}
+.wait-players-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;max-width:400px;padding:0 8px}
+.wait-player-tag{background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:600;animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
 
 /* QUESTION */
 #screen-question{gap:16px;justify-content:flex-start;padding-top:30px}
@@ -135,6 +138,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <p id="wait-name" style="font-size:20px;font-weight:700;color:var(--cyan)"></p>
   <p style="color:var(--muted)">Chờ host bắt đầu game...</p>
   <div class="wait-count pulse" id="wait-count">👥 0 người trong phòng</div>
+  <div class="wait-players-list" id="wait-players"></div>
 </div>
 
 <!-- QUESTION -->
@@ -197,7 +201,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDsFdz15t3kydCu-UPpAYsqzq3CnStL7og",
@@ -285,6 +289,9 @@ document.getElementById('btn-join').addEventListener('click', async () => {
 function listenPlayerCount() {
   onSnapshot(collection(db, 'games', gameId, 'players'), snap => {
     document.getElementById('wait-count').textContent = `👥 ${snap.size} người trong phòng`;
+    const tags = [];
+    snap.forEach(d => tags.push(`<div class="wait-player-tag">👤 ${d.data().name}</div>`));
+    document.getElementById('wait-players').innerHTML = tags.join('');
   });
 }
 
@@ -314,10 +321,26 @@ async function handleGameState(data) {
     if (!answered) { answered = true; myChoice = -1; }
     showResult(correctAnswer, myChoice, currentQ);
   } else if (status === 'leaderboard') {
+    const prevScore = myScore;
     await refreshMyScore();
+    const earned = myScore - prevScore;
+    const ptsEl = document.getElementById('res-pts');
+    if (ptsEl && earned > 0) {
+      ptsEl.className = 'result-pts correct';
+      ptsEl.textContent = '+' + earned;
+    }
+    await new Promise(r => setTimeout(r, 1500));
     showRank();
   } else if (status === 'ended') {
+    const prevScore2 = myScore;
     await refreshMyScore();
+    const earned2 = myScore - prevScore2;
+    const ptsEl2 = document.getElementById('res-pts');
+    if (ptsEl2 && earned2 > 0) {
+      ptsEl2.className = 'result-pts correct';
+      ptsEl2.textContent = '+' + earned2;
+      await new Promise(r => setTimeout(r, 1000));
+    }
     showDone();
   }
 }
@@ -355,6 +378,10 @@ async function submitAnswer(choice) {
   answered = true;
   myChoice = choice;
   clearInterval(timerInterval);
+  // Reset timer bar visual to 0
+  document.getElementById('p-timer-bar').style.width = '0%';
+  document.getElementById('p-timer-bar').style.background = 'var(--red)';
+  document.getElementById('p-timer-num').textContent = '0';
 
   const q = QUESTIONS[currentQ];
   ['pbtn-a','pbtn-b','pbtn-c','pbtn-d'].forEach(id => {
@@ -405,24 +432,22 @@ async function refreshMyScore() {
 
 async function showRank() {
   showScreen('screen-rank');
-  const snap = await getDoc(doc(db, 'games', gameId, 'players', playerId));
-  const allSnap = await import("https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js").then(m => m.getDocs(collection(db, 'games', gameId, 'players')));
+  const allSnap = await getDocs(collection(db, 'games', gameId, 'players'));
   const all = [];
-  allSnap.forEach(d => all.push(d.data()));
+  allSnap.forEach(d => all.push({ ...d.data(), _id: d.id }));
   all.sort((a,b) => (b.score||0) - (a.score||0));
-  const rank = all.findIndex(p => p.name === playerName) + 1;
+  const rank = all.findIndex(p => p._id === playerId) + 1;
   document.getElementById('my-rank').textContent = '#' + rank;
   document.getElementById('my-score').textContent = myScore + ' pts';
 }
 
 async function showDone() {
   showScreen('screen-done');
-  const { getDocs: gd2 } = await import("https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js");
-  const allSnap = await gd2(collection(db, 'games', gameId, 'players'));
+  const allSnap = await getDocs(collection(db, 'games', gameId, 'players'));
   const all = [];
-  allSnap.forEach(d => all.push(d.data()));
+  allSnap.forEach(d => all.push({ ...d.data(), _id: d.id }));
   all.sort((a,b) => (b.score||0) - (a.score||0));
-  const rank = all.findIndex(p => p.name === playerName) + 1;
+  const rank = all.findIndex(p => p._id === playerId) + 1;
   document.getElementById('done-name').textContent = playerName;
   document.getElementById('done-score').textContent = myScore + ' pts';
   document.getElementById('done-rank').textContent = '#' + rank;

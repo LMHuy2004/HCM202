@@ -82,6 +82,30 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .back-btn:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);transform:translateX(-3px);box-shadow:0 6px 24px rgba(0,0,0,.5)}
 .back-btn-arrow{transition:transform .25s ease}
 .back-btn:hover .back-btn-arrow{transform:translateX(-4px)}
+
+/* COUNTDOWN OVERLAY */
+#countdown-overlay{display:none;position:fixed;inset:0;background:rgba(7,7,26,.92);z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+#countdown-overlay.active{display:flex}
+#countdown-num{font-size:180px;font-weight:900;background:linear-gradient(135deg,#a78bfa,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:countPulse .9s ease-out}
+@keyframes countPulse{0%{transform:scale(1.3);opacity:.5}100%{transform:scale(1);opacity:1}}
+#countdown-label{font-size:22px;font-weight:700;color:var(--muted)}
+
+/* DISTRIBUTION BARS */
+.dist-row{display:flex;gap:16px;width:100%;max-width:900px;justify-content:center;flex-wrap:wrap}
+.dist-item{flex:1;min-width:160px;background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.dist-top{display:flex;justify-content:space-between;align-items:center}
+.dist-lbl{font-size:14px;font-weight:800;border-radius:6px;padding:3px 10px}
+.dist-lbl.da{background:rgba(239,68,68,.4);color:#fca5a5}
+.dist-lbl.db{background:rgba(59,130,246,.4);color:#93c5fd}
+.dist-lbl.dc{background:rgba(16,185,129,.4);color:#6ee7b7}
+.dist-lbl.dd{background:rgba(245,158,11,.4);color:#fcd34d}
+.dist-count{font-size:22px;font-weight:900}
+.dist-bar-wrap{height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.dist-bar{height:100%;border-radius:4px;transition:width .5s ease}
+.dist-bar.da{background:rgba(239,68,68,.8)}
+.dist-bar.db{background:rgba(59,130,246,.8)}
+.dist-bar.dc{background:rgba(16,185,129,.8)}
+.dist-bar.dd{background:rgba(245,158,11,.8)}
 </style>
 </head>
 <body>
@@ -91,6 +115,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <span class="back-btn-arrow">←</span>
   <span>Về trang chủ</span>
 </a>
+
+<!-- COUNTDOWN OVERLAY -->
+<div id="countdown-overlay">
+  <div id="countdown-num">3</div>
+  <div id="countdown-label">Chuẩn bị!</div>
+</div>
 
 
 <div id="screen-lobby" class="screen active">
@@ -102,7 +132,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="card" style="text-align:center">
       <p style="color:var(--muted);font-size:13px;font-weight:600;margin-bottom:8px">MÃ PHÒNG</p>
       <div class="room-code" id="room-code">------</div>
-      <p style="color:var(--muted);font-size:13px;margin-top:12px">Nhập tại <strong style="color:var(--cyan)" id="player-url">...</strong></p>
+      <p style="color:var(--muted);font-size:13px;margin-top:12px">Mở trực tiếp: <a style="color:var(--cyan);word-break:break-all;font-weight:700;text-decoration:underline" id="player-url" target="_blank">...</a></p>
       <div style="margin-top:16px;display:flex;justify-content:center">
         <div class="qr-wrap"><div id="qr-code"></div></div>
       </div>
@@ -140,6 +170,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="ans-box d"><span class="ans-label">D</span><span id="ans-d"></span></div>
   </div>
   <p class="answer-count" id="answer-count">0 người đã trả lời</p>
+  <div class="dist-row" id="dist-row">
+    <div class="dist-item"><div class="dist-top"><span class="dist-lbl da">A</span><span class="dist-count" id="dc-0">0</span></div><div class="dist-bar-wrap"><div class="dist-bar da" id="db-0" style="width:0%"></div></div></div>
+    <div class="dist-item"><div class="dist-top"><span class="dist-lbl db">B</span><span class="dist-count" id="dc-1">0</span></div><div class="dist-bar-wrap"><div class="dist-bar db" id="db-1" style="width:0%"></div></div></div>
+    <div class="dist-item"><div class="dist-top"><span class="dist-lbl dc">C</span><span class="dist-count" id="dc-2">0</span></div><div class="dist-bar-wrap"><div class="dist-bar dc" id="db-2" style="width:0%"></div></div></div>
+    <div class="dist-item"><div class="dist-top"><span class="dist-lbl dd">D</span><span class="dist-count" id="dc-3">0</span></div><div class="dist-bar-wrap"><div class="dist-bar dd" id="db-3" style="width:0%"></div></div></div>
+  </div>
 </div>
 
 <!-- LEADERBOARD -->
@@ -211,7 +247,9 @@ async function initGame() {
   
   document.getElementById('room-code').textContent = gameId;
   const displayHost = location.hostname === 'localhost' ? location.host : location.hostname;
-  document.getElementById('player-url').textContent = displayHost + '/player.html?game=' + gameId;
+  const linkEl = document.getElementById('player-url');
+  linkEl.textContent = displayHost + '/player.html?game=' + gameId;
+  linkEl.href = playerUrl;
   
   new QRCode(document.getElementById('qr-code'), {text: playerUrl, width:160, height:160, colorDark:'#000', colorLight:'#fff'});
 
@@ -241,7 +279,39 @@ function renderPlayerList() {
 
 async function startGame() {
   currentQ = 0;
+  await runCountdown();
   await showQuestion();
+}
+
+function runCountdown() {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('countdown-overlay');
+    const numEl = document.getElementById('countdown-num');
+    const lblEl = document.getElementById('countdown-label');
+    overlay.classList.add('active');
+    let count = 3;
+    numEl.textContent = count;
+    numEl.style.animation = 'none';
+    void numEl.offsetWidth;
+    numEl.style.animation = 'countPulse .9s ease-out';
+    const t = setInterval(() => {
+      count--;
+      if (count <= 0) {
+        clearInterval(t);
+        lblEl.textContent = 'Bắt đầu!';
+        numEl.textContent = '🔥';
+        numEl.style.animation = 'none';
+        void numEl.offsetWidth;
+        numEl.style.animation = 'countPulse .5s ease-out';
+        setTimeout(() => { overlay.classList.remove('active'); lblEl.textContent = 'Chuẩn bị!'; resolve(); }, 600);
+      } else {
+        numEl.textContent = count;
+        numEl.style.animation = 'none';
+        void numEl.offsetWidth;
+        numEl.style.animation = 'countPulse .9s ease-out';
+      }
+    }, 1000);
+  });
 }
 
 async function showQuestion() {
@@ -286,10 +356,20 @@ function startTimer(duration, startTime) {
 let unsubAnswers = null;
 function listenAnswers(startTime, duration) {
   if (unsubAnswers) unsubAnswers();
+  // Reset distribution
+  [0,1,2,3].forEach(i => { document.getElementById('dc-'+i).textContent = '0'; document.getElementById('db-'+i).style.width = '0%'; });
   unsubAnswers = onSnapshot(collection(db, 'games', gameId, 'answers'), snap => {
     const count = snap.size;
     const total = Object.keys(players).length;
     document.getElementById('answer-count').textContent = `${count}/${total} người đã trả lời`;
+    // Count per choice
+    const dist = [0, 0, 0, 0];
+    snap.forEach(d => { const c = d.data().choice; if (c >= 0 && c <= 3) dist[c]++; });
+    const maxVal = Math.max(...dist, 1);
+    dist.forEach((n, i) => {
+      document.getElementById('dc-'+i).textContent = n;
+      document.getElementById('db-'+i).style.width = (n / maxVal * 100) + '%';
+    });
   });
 }
 
@@ -363,6 +443,7 @@ function showFinal() {
 document.getElementById('btn-start').addEventListener('click', startGame);
 document.getElementById('btn-next').addEventListener('click', async () => {
   currentQ++;
+  await runCountdown();
   await showQuestion();
 });
 document.getElementById('btn-end').addEventListener('click', () => {
