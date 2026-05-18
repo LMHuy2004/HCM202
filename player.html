@@ -212,19 +212,6 @@ const firebaseConfig = {
   appId: "1:457399707383:web:f346d140bebb3bfd4b15f2"
 };
 
-const QUESTIONS = [
-  {q:"Hồ Chí Minh sinh năm nào?",opts:["1888","1890","1892","1895"],ans:1,time:15},
-  {q:"Hồ Chí Minh ra đi tìm đường cứu nước từ bến cảng nào?",opts:["Hải Phòng","Đà Nẵng","Nhà Rồng (Sài Gòn)","Vũng Tàu"],ans:2,time:15},
-  {q:"Tên gọi nào KHÔNG phải của Hồ Chí Minh?",opts:["Nguyễn Ái Quốc","Nguyễn Tất Thành","Nguyễn Sinh Cung","Nguyễn Văn Luyện"],ans:3,time:20},
-  {q:"Hồ Chí Minh đọc bản Tuyên ngôn Độc lập vào ngày nào?",opts:["2/9/1945","19/8/1945","30/4/1975","7/5/1954"],ans:0,time:15},
-  {q:"Theo Hồ Chí Minh, điều gì quý giá nhất của con người?",opts:["Tiền bạc","Danh vọng","Độc lập - Tự do - Hạnh phúc","Quyền lực"],ans:2,time:20},
-  {q:"Tư tưởng Hồ Chí Minh về con người tập trung vào điều gì?",opts:["Xây dựng con người toàn diện","Ưu tiên kinh tế","Tập trung quân sự","Phát triển kỹ thuật"],ans:0,time:20},
-  {q:"Chiến dịch nào kết thúc kháng chiến chống Pháp?",opts:["Chiến dịch Hồ Chí Minh","Chiến dịch Điện Biên Phủ","Chiến dịch Biên giới","Chiến dịch Tây Nguyên"],ans:1,time:15},
-  {q:"Hồ Chí Minh mất năm nào?",opts:["1965","1967","1969","1971"],ans:2,time:15},
-  {q:"Quê hương của Hồ Chí Minh ở tỉnh nào?",opts:["Hà Tĩnh","Nghệ An","Thanh Hóa","Quảng Bình"],ans:1,time:15},
-  {q:"Đảng Cộng sản Việt Nam được thành lập năm nào?",opts:["1925","1928","1930","1935"],ans:2,time:15}
-];
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -237,6 +224,8 @@ let answered = false;
 let myChoice = -1;
 let timerInterval = null;
 let unsubGame = null;
+let currentQData = null; // stores {q, opts, time, total} from Firebase
+
 
 // Expose submitAnswer globally
 window.submitAnswer = submitAnswer;
@@ -314,6 +303,13 @@ async function handleGameState(data) {
       currentQ = currentQuestion;
       answered = false;
       myChoice = -1;
+      // Store question data from Firebase
+      currentQData = {
+        q: data.questionText || '...',
+        opts: data.questionOpts || ['A','B','C','D'],
+        time: data.questionTime || 20,
+        total: data.totalQuestions || 10
+      };
       showQuestion(currentQ, questionStartTime);
     }
   } else if (status === 'reveal') {
@@ -347,11 +343,11 @@ async function handleGameState(data) {
 
 function showQuestion(qIdx, startTime) {
   clearInterval(timerInterval);
-  const q = QUESTIONS[qIdx];
+  const q = currentQData || { q: 'Đang tải...', opts: ['...','...','...','...'], time: 20, total: 10 };
   showScreen('screen-question');
-  document.getElementById('pq-num').textContent = `Câu ${qIdx+1}/${QUESTIONS.length}`;
+  document.getElementById('pq-num').textContent = `Câu ${qIdx+1}/${q.total}`;
   document.getElementById('pq-text').textContent = q.q;
-  ['a','b','c','d'].forEach((l,i) => document.getElementById('pans-'+l).textContent = q.opts[i]);
+  ['a','b','c','d'].forEach((l,i) => document.getElementById('pans-'+l).textContent = q.opts[i] || '');
   ['pbtn-a','pbtn-b','pbtn-c','pbtn-d'].forEach(id => {
     const btn = document.getElementById(id);
     btn.disabled = false;
@@ -378,27 +374,25 @@ async function submitAnswer(choice) {
   answered = true;
   myChoice = choice;
   clearInterval(timerInterval);
-  // Reset timer bar visual to 0
   document.getElementById('p-timer-bar').style.width = '0%';
   document.getElementById('p-timer-bar').style.background = 'var(--red)';
   document.getElementById('p-timer-num').textContent = '0';
 
-  const q = QUESTIONS[currentQ];
+  const opts = currentQData ? currentQData.opts : ['A','B','C','D'];
   ['pbtn-a','pbtn-b','pbtn-c','pbtn-d'].forEach(id => {
     document.getElementById(id).disabled = true;
     document.getElementById(id).style.opacity = '0.5';
   });
 
-  // Show chosen answer on waiting screen
   const labels = ['A','B','C','D'];
   document.getElementById('chosen-lbl').textContent = labels[choice];
-  document.getElementById('chosen-text').textContent = q.opts[choice];
+  document.getElementById('chosen-text').textContent = opts[choice] || '';
 
   await setDoc(doc(db, 'games', gameId, 'answers', playerId), {
     choice,
     questionIndex: currentQ,
     answeredAt: Date.now(),
-    startTime: Date.now() - 100 // approximate
+    startTime: Date.now() - 100
   });
 
   showScreen('screen-answered');
@@ -406,13 +400,13 @@ async function submitAnswer(choice) {
 
 function showResult(correctAnswer, myChoice, qIdx) {
   showScreen('screen-result');
-  const q = QUESTIONS[qIdx];
+  const opts = currentQData ? currentQData.opts : [];
   const isCorrect = myChoice === correctAnswer;
   const letters = ['A','B','C','D'];
-  
+
   document.getElementById('res-icon').textContent = isCorrect ? '🎉' : (myChoice === -1 ? '⏰' : '😢');
   document.getElementById('res-label').textContent = isCorrect ? 'Chính xác!' : (myChoice === -1 ? 'Hết giờ!' : 'Sai rồi!');
-  
+
   const ptsEl = document.getElementById('res-pts');
   if (isCorrect) {
     ptsEl.className = 'result-pts waiting';
@@ -421,8 +415,9 @@ function showResult(correctAnswer, myChoice, qIdx) {
     ptsEl.className = 'result-pts wrong';
     ptsEl.textContent = '+0';
   }
-  
-  document.getElementById('res-correct-ans').textContent = `✅ Đáp án đúng: ${letters[correctAnswer]}. ${q.opts[correctAnswer]}`;
+
+  const correctText = opts[correctAnswer] || '';
+  document.getElementById('res-correct-ans').textContent = `✅ Đáp án đúng: ${letters[correctAnswer]}. ${correctText}`;
 }
 
 async function refreshMyScore() {

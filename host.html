@@ -339,7 +339,11 @@ async function showQuestion() {
   await updateDoc(doc(db, 'games', gameId), {
     status: 'question',
     currentQuestion: currentQ,
-    questionStartTime: startTime
+    questionStartTime: startTime,
+    questionText: q.q,
+    questionOpts: q.opts,
+    questionTime: q.time,
+    totalQuestions: QUESTIONS.length
   });
 
   startTimer(q.time, startTime);
