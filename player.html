@@ -66,17 +66,21 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 /* ANSWERED */
 #screen-answered{text-align:center}
-.ans-emoji{font-size:100px;margin-bottom:16px}
+.ans-emoji{font-size:80px;margin-bottom:12px}
 #screen-answered h2{font-size:26px;font-weight:800}
 #screen-answered p{color:var(--muted);margin-top:8px}
+.chosen-answer{margin-top:20px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.4);border-radius:16px;padding:16px 28px;font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.chosen-answer .chosen-lbl{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;background:rgba(124,58,237,.5);flex-shrink:0}
+.chosen-answer .chosen-text{text-align:left;flex:1}
 
 /* RESULT */
 #screen-result{text-align:center}
 .result-icon{font-size:90px;animation:popIn .4s cubic-bezier(.175,.885,.32,1.275)}
 @keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
-.result-pts{font-size:56px;font-weight:900;margin:8px 0}
+.result-pts{font-size:48px;font-weight:900;margin:8px 0}
 .result-pts.correct{color:var(--green)}
 .result-pts.wrong{color:var(--red)}
+.result-pts.waiting{font-size:22px;color:var(--muted);font-weight:700}
 #screen-result .correct-ans{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.4);border-radius:12px;padding:12px 20px;margin-top:16px;font-size:15px;font-weight:600}
 
 /* LEADERBOARD PLAYER */
@@ -151,7 +155,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <div id="screen-answered" class="screen">
   <div class="ans-emoji">✅</div>
   <h2>Đã gửi câu trả lời!</h2>
-  <p>Chờ kết quả...</p>
+  <p>Chờ host công bố đáp án...</p>
+  <div class="chosen-answer" id="chosen-answer-display">
+    <div class="chosen-lbl" id="chosen-lbl">A</div>
+    <div class="chosen-text" id="chosen-text">...</div>
+  </div>
 </div>
 
 <!-- RESULT -->
@@ -354,6 +362,11 @@ async function submitAnswer(choice) {
     document.getElementById(id).style.opacity = '0.5';
   });
 
+  // Show chosen answer on waiting screen
+  const labels = ['A','B','C','D'];
+  document.getElementById('chosen-lbl').textContent = labels[choice];
+  document.getElementById('chosen-text').textContent = q.opts[choice];
+
   await setDoc(doc(db, 'games', gameId, 'answers', playerId), {
     choice,
     questionIndex: currentQ,
@@ -370,12 +383,17 @@ function showResult(correctAnswer, myChoice, qIdx) {
   const isCorrect = myChoice === correctAnswer;
   const letters = ['A','B','C','D'];
   
-  document.getElementById('res-icon').textContent = isCorrect ? '🎉' : '😢';
+  document.getElementById('res-icon').textContent = isCorrect ? '🎉' : (myChoice === -1 ? '⏰' : '😢');
   document.getElementById('res-label').textContent = isCorrect ? 'Chính xác!' : (myChoice === -1 ? 'Hết giờ!' : 'Sai rồi!');
   
   const ptsEl = document.getElementById('res-pts');
-  ptsEl.className = 'result-pts ' + (isCorrect ? 'correct' : 'wrong');
-  ptsEl.textContent = isCorrect ? '+???' : '+0';
+  if (isCorrect) {
+    ptsEl.className = 'result-pts waiting';
+    ptsEl.textContent = '⏳ Đang tính điểm...';
+  } else {
+    ptsEl.className = 'result-pts wrong';
+    ptsEl.textContent = '+0';
+  }
   
   document.getElementById('res-correct-ans').textContent = `✅ Đáp án đúng: ${letters[correctAnswer]}. ${q.opts[correctAnswer]}`;
 }

@@ -210,7 +210,8 @@ async function initGame() {
   const playerUrl = `${location.origin}${location.pathname.replace('host.html','player.html')}?game=${gameId}`;
   
   document.getElementById('room-code').textContent = gameId;
-  document.getElementById('player-url').textContent = location.hostname === 'localhost' ? location.host + '/player.html' : location.hostname + '/player.html';
+  const displayHost = location.hostname === 'localhost' ? location.host : location.hostname;
+  document.getElementById('player-url').textContent = displayHost + '/player.html?game=' + gameId;
   
   new QRCode(document.getElementById('qr-code'), {text: playerUrl, width:160, height:160, colorDark:'#000', colorLight:'#fff'});
 
