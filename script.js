@@ -1,204 +1,191 @@
-// ===== PARTICLES BACKGROUND =====
+// ===== PARTICLES =====
 (function() {
-  const canvas = document.getElementById('particles-canvas');
-  const ctx = canvas.getContext('2d');
+  const c = document.getElementById('particles-canvas'), ctx = c.getContext('2d');
   let particles = [];
-  const PARTICLE_COUNT = 60;
-
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  class Particle {
+  function resize() { c.width = innerWidth; c.height = innerHeight; }
+  addEventListener('resize', resize); resize();
+  class P {
     constructor() { this.reset(); }
-    reset() {
-      this.x = Math.random() * canvas.width;
-      this.y = Math.random() * canvas.height;
-      this.size = Math.random() * 2 + 0.5;
-      this.speedX = (Math.random() - 0.5) * 0.3;
-      this.speedY = (Math.random() - 0.5) * 0.3;
-      this.opacity = Math.random() * 0.4 + 0.1;
-      this.hue = Math.random() > 0.5 ? 30 : 0;
-    }
-    update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-      if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
-    }
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${this.hue}, 60%, 70%, ${this.opacity})`;
-      ctx.fill();
-    }
+    reset() { this.x = Math.random()*c.width; this.y = Math.random()*c.height; this.s = Math.random()*2+0.5; this.sx = (Math.random()-0.5)*0.3; this.sy = (Math.random()-0.5)*0.3; this.o = Math.random()*0.4+0.1; this.h = Math.random()>0.5?30:0; }
+    update() { this.x+=this.sx; this.y+=this.sy; if(this.x<0||this.x>c.width||this.y<0||this.y>c.height) this.reset(); }
+    draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fillStyle=`hsla(${this.h},60%,70%,${this.o})`; ctx.fill(); }
   }
-
-  for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
-
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => { p.update(); p.draw(); });
-    requestAnimationFrame(animate);
-  }
-  animate();
+  for(let i=0;i<60;i++) particles.push(new P());
+  (function animate() { ctx.clearRect(0,0,c.width,c.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animate); })();
 })();
 
-// ===== NAVIGATION =====
+// ===== NAV =====
 const nav = document.getElementById('mainNav');
 const navLinks = document.querySelectorAll('.nav-links a');
 const sections = document.querySelectorAll('.section');
-
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 50);
-  let current = '';
-  sections.forEach(s => {
-    if (window.scrollY >= s.offsetTop - 200) current = s.getAttribute('id');
-  });
-  navLinks.forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
-  });
+addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', scrollY > 50);
+  let cur = '';
+  sections.forEach(s => { if (scrollY >= s.offsetTop - 200) cur = s.id; });
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
 });
 
 // ===== SCROLL ANIMATIONS =====
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('visible');
-  });
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.15 });
+document.querySelectorAll('.fade-in, .timeline-item').forEach(el => obs.observe(el));
 
-document.querySelectorAll('.fade-in, .timeline-item').forEach(el => observer.observe(el));
+// ===== WEBSOCKET =====
+let ws = null;
+let leaderboardData = [];
 
-// ===== MINIGAME =====
+function connectWS() {
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const url = `${proto}//${location.host}`;
+  try {
+    ws = new WebSocket(url);
+    ws.onmessage = (e) => {
+      const msg = JSON.parse(e.data);
+      if (msg.type === 'leaderboard') {
+        leaderboardData = msg.data;
+        renderLeaderboard();
+      }
+    };
+    ws.onclose = () => { setTimeout(connectWS, 3000); };
+    ws.onerror = () => {};
+  } catch(e) {}
+}
+connectWS();
+
+function wsSend(obj) {
+  if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj));
+}
+
+// ===== QR CODE =====
+(async function initQR() {
+  try {
+    const res = await fetch('/api/server-info');
+    const info = await res.json();
+    const gameUrl = info.url + '#minigame';
+    document.getElementById('qrUrl').textContent = gameUrl;
+    new QRCode(document.getElementById('qrcode'), {
+      text: gameUrl, width: 200, height: 200,
+      colorDark: '#1a0a00', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch(e) {
+    // Fallback: use current URL
+    const gameUrl = location.href.split('#')[0] + '#minigame';
+    document.getElementById('qrUrl').textContent = gameUrl;
+    try {
+      new QRCode(document.getElementById('qrcode'), {
+        text: gameUrl, width: 200, height: 200,
+        colorDark: '#1a0a00', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } catch(e2) {
+      document.getElementById('qrcode').innerHTML = '<p style="padding:20px;color:#666;">QR không khả dụng</p>';
+    }
+  }
+})();
+
+// ===== QUIZ DATA (bám sát nội dung thuyết trình) =====
 const quizData = [
   {
-    q: "Câu nói nổi tiếng \"Không có gì quý hơn độc lập, tự do\" của Hồ Chí Minh được đưa ra trong bối cảnh nào?",
-    opts: [
-      "Tuyên ngôn Độc lập 1945",
-      "Lời kêu gọi toàn quốc kháng chiến 1946",
-      "Khi đế quốc Mỹ mở rộng chiến tranh ở Việt Nam (1965-1966)",
-      "Di chúc 1969"
-    ],
-    answer: 2,
-    explain: "Câu nói này được HCM nêu lên vào năm 1966, trong bối cảnh đế quốc Mỹ leo thang chiến tranh, như một tuyên ngôn bất hủ khát khao nền độc lập, tự do."
-  },
-  {
-    q: "Theo Hồ Chí Minh, độc lập dân tộc phải gắn liền với điều gì?",
-    opts: [
-      "Quyền lực nhà nước",
-      "Tự do, hạnh phúc của nhân dân",
-      "Sức mạnh quân sự",
-      "Phát triển công nghiệp"
-    ],
+    q: "Theo phần \"Đặt vấn đề\", tư tưởng \"độc lập dân tộc\" của HCM trong bối cảnh hiện đại có thể liên hệ đến điều gì?",
+    opts: ["Chỉ liên quan đến lịch sử", "Tự chủ tư duy, tài chính, kỹ năng của mỗi cá nhân", "Chỉ áp dụng cho lãnh đạo quốc gia", "Không còn phù hợp với thời đại"],
     answer: 1,
-    explain: "\"Nước độc lập mà dân không hưởng hạnh phúc tự do, thì độc lập cũng chẳng có nghĩa lý gì.\" — HCM luôn coi độc lập gắn liền với tự do, hạnh phúc cho nhân dân."
+    explain: "Bài thuyết trình liên hệ \"độc lập dân tộc\" với tinh thần tự chủ cá nhân: tự chủ tư duy, tài chính, kỹ năng — đây là \"phiên bản cá nhân\" của độc lập."
   },
   {
-    q: "Năm 1919, Hồ Chí Minh đã gửi tới Hội nghị Véc-xây bản yêu sách nào?",
-    opts: [
-      "Tuyên ngôn Độc lập",
-      "Đường Cách Mệnh",
-      "Yêu sách của nhân dân An Nam",
-      "Bản án chế độ thực dân Pháp"
-    ],
-    answer: 2,
-    explain: "Bản \"Yêu sách của nhân dân An Nam\" (1919) đòi quyền bình đẳng về mặt pháp lý và các quyền tự do, dân chủ — cho thấy tư tưởng về quyền dân tộc đã sớm hình thành."
-  },
-  {
-    q: "HCM quyết định chọn con đường cách mạng vô sản sau sự kiện nào?",
-    opts: [
-      "Cách mạng Pháp 1789",
-      "Chiến tranh thế giới thứ nhất",
-      "Cách mạng Tháng Mười Nga 1917 và đọc Luận cương Lênin 1920",
-      "Thành lập Quốc tế Cộng sản"
-    ],
-    answer: 2,
-    explain: "Cách mạng Tháng Mười Nga (1917) ảnh hưởng sâu sắc, và năm 1920 khi đọc Luận cương của Lênin, HCM tìm ra con đường giải phóng dân tộc: đi theo chủ nghĩa Mác-Lênin."
-  },
-  {
-    q: "Trong Chánh cương vắn tắt (1930), HCM xác định mục tiêu cách mạng Việt Nam là gì?",
-    opts: [
-      "Xây dựng nền dân chủ tư sản",
-      "Làm tư sản dân quyền CM và thổ địa CM để đi tới xã hội cộng sản",
-      "Thành lập chế độ quân chủ lập hiến",
-      "Hợp tác với thực dân Pháp"
-    ],
+    q: "Trong phần Cơ sở lý thuyết, HCM đã dẫn nguồn từ hai bản tuyên ngôn nổi tiếng nào để khẳng định quyền dân tộc?",
+    opts: ["Tuyên ngôn Cộng sản & Hiến pháp Liên Xô", "Tuyên ngôn Độc lập Mỹ 1776 & Tuyên ngôn Nhân quyền Pháp 1791", "Hiến chương LHQ & Hiệp định Giơnevơ", "Công ước Quốc tế & Tuyên bố Cairo"],
     answer: 1,
-    explain: "Chánh cương vắn tắt (1930) xác định: làm tư sản dân quyền cách mạng và thổ địa cách mạng để đi tới xã hội cộng sản — gắn liền độc lập dân tộc với CNXH."
+    explain: "HCM mở đầu Tuyên ngôn Độc lập 1945 bằng việc trích dẫn Tuyên ngôn Độc lập Mỹ (1776) và Tuyên ngôn Nhân quyền Pháp (1791) để khẳng định quyền bình đẳng của các dân tộc."
   },
   {
-    q: "Theo HCM, trình tự giải phóng ở Việt Nam khác với châu Âu như thế nào?",
-    opts: [
-      "Giải phóng giai cấp trước, sau đó giải phóng dân tộc",
-      "Giải phóng dân tộc → giai cấp → xã hội → con người",
-      "Giải phóng xã hội trước, rồi giải phóng dân tộc",
-      "Không có sự khác biệt"
-    ],
+    q: "Câu nói nào dưới đây thể hiện trụ cột \"Độc lập gắn liền hạnh phúc nhân dân\" trong bài thuyết trình?",
+    opts: ["\"Không có gì quý hơn độc lập, tự do\"", "\"Nước độc lập mà dân không hưởng hạnh phúc tự do, thì độc lập cũng chẳng có nghĩa lý gì\"", "\"Nước Việt Nam là một, dân tộc Việt Nam là một\"", "\"Đoàn kết, đoàn kết, đại đoàn kết\""],
     answer: 1,
-    explain: "Khác với châu Âu (giai cấp → dân tộc), ở VN và các nước thuộc địa, trình tự là: giải phóng dân tộc → giai cấp → xã hội → con người."
+    explain: "Đây là câu nói nổi tiếng của HCM, thể hiện rõ trụ cột thứ 2: độc lập phải đi đôi với cơm ăn, áo mặc, học hành cho nhân dân."
   },
   {
-    q: "HCM khẳng định cách mạng giải phóng dân tộc ở thuộc địa có thể:",
-    opts: [
-      "Chỉ thành công khi CM ở chính quốc thắng lợi trước",
-      "Phải chờ CM thế giới thắng lợi",
-      "Chủ động giành thắng lợi trước CM vô sản ở chính quốc",
-      "Không liên quan đến CM ở chính quốc"
-    ],
-    answer: 2,
-    explain: "Đây là luận điểm sáng tạo của HCM, khác với quan điểm thụ động của ĐH VI Quốc tế Cộng sản (1928) — CM thuộc địa có thể chủ động giành thắng lợi trước."
-  },
-  {
-    q: "Theo HCM, lực lượng nào là \"gốc\" của cách mạng?",
-    opts: [
-      "Giai cấp tư sản dân tộc",
-      "Trí thức",
-      "Công nhân và nông dân (công nông)",
-      "Quân đội"
-    ],
-    answer: 2,
-    explain: "\"Công nông là gốc cách mệnh\" — HCM nhấn mạnh trong tác phẩm Đường Cách Mệnh. Công nhân và nông dân là giai cấp cách mạng nhất, bị bóc lột nặng nề nhất."
-  },
-  {
-    q: "Quan niệm của HCM về chủ nghĩa xã hội, đặc trưng nào sau đây KHÔNG phải là đặc trưng cơ bản?",
-    opts: [
-      "Chế độ dân chủ, nhân dân làm chủ",
-      "Nền kinh tế thị trường tự do hoàn toàn",
-      "Trình độ phát triển cao về văn hóa và đạo đức",
-      "Chế độ công hữu về tư liệu sản xuất chủ yếu"
-    ],
+    q: "Theo timeline trong bài, sự kiện nào giúp HCM tìm ra con đường cách mạng vô sản?",
+    opts: ["Chiến tranh thế giới thứ nhất (1914)", "CM Tháng Mười Nga 1917 & đọc Luận cương Lênin 1920", "Thành lập Đảng Cộng sản 1930", "Hội nghị Véc-xây 1919"],
     answer: 1,
-    explain: "Theo HCM, XHCN có 4 đặc trưng: dân chủ, kinh tế dựa trên LLSX hiện đại & công hữu TLSX, văn hóa - đạo đức phát triển cao, nhân dân là chủ thể. \"Kinh tế thị trường tự do hoàn toàn\" không phải đặc trưng."
+    explain: "Theo timeline: CM Tháng Mười Nga (1917) ảnh hưởng sâu sắc, và năm 1920 khi đọc Luận cương Lênin, HCM \"vui mừng đến phát khóc lên\" — tìm ra con đường CMVS."
   },
   {
-    q: "Trong tư tưởng HCM, động lực mạnh mẽ nhất của CNXH được tạo nên từ sự kết hợp của:",
-    opts: [
-      "Kinh tế, quân sự, ngoại giao",
-      "Lợi ích của dân, dân chủ, đoàn kết toàn dân",
-      "Công nghiệp hóa, hiện đại hóa",
-      "Đảng, Nhà nước, Quân đội"
-    ],
+    q: "Chánh cương vắn tắt (1930) xác định mục tiêu gì, được nhấn mạnh trong phần lý thuyết?",
+    opts: ["Xây dựng nền dân chủ tư sản", "Làm tư sản dân quyền CM và thổ địa CM để đi tới xã hội cộng sản", "Hợp tác với thực dân Pháp", "Chỉ đấu tranh giải phóng dân tộc"],
     answer: 1,
-    explain: "Trong tư tưởng HCM: lợi ích của dân, dân chủ của dân, đoàn kết toàn dân gắn bó hữu cơ, là cơ sở, là tiền đề của nhau — tạo nên hệ thống động lực mạnh mẽ nhất."
+    explain: "Chánh cương vắn tắt (1930) gắn liền độc lập dân tộc với CNXH — đây là luận điểm then chốt trong bài thuyết trình."
+  },
+  {
+    q: "Phần \"Cơ sở vận dụng\" nhấn mạnh rằng \"chủ quyền\" trong thời đại số bao gồm những gì?",
+    opts: ["Chỉ là lãnh thổ, biên giới", "Chủ quyền dữ liệu, an ninh mạng, kinh tế số", "Chỉ là quân sự", "Chỉ là ngoại giao"],
+    answer: 1,
+    explain: "Bài thuyết trình mở rộng khái niệm chủ quyền: không chỉ lãnh thổ mà còn chủ quyền dữ liệu, an ninh mạng, kinh tế số — yêu cầu làm chủ công nghệ."
+  },
+  {
+    q: "Nguyên tắc \"Hội nhập nhưng không hòa tan\" trong phần Vận dụng lấy cảm hứng từ đặc điểm nào của HCM?",
+    opts: ["HCM chỉ học trong nước", "HCM tiếp thu tinh hoa Đông-Tây nhưng luôn giữ gốc dân tộc", "HCM không giao lưu quốc tế", "HCM chỉ theo một học thuyết duy nhất"],
+    answer: 1,
+    explain: "Bài thuyết trình liên hệ: như HCM tiếp thu Mác-Lênin, văn hóa phương Tây nhưng luôn giữ gốc dân tộc — VN hội nhập nhưng giữ bản sắc."
+  },
+  {
+    q: "Bài học \"Giữ gốc, vươn xa\" trong phần Giải pháp ám chỉ điều gì?",
+    opts: ["Không nên ra nước ngoài", "Giữ vững bản sắc, giá trị cốt lõi VN khi bước ra thế giới", "Chỉ tập trung phát triển trong nước", "Từ bỏ văn hóa truyền thống để hội nhập"],
+    answer: 1,
+    explain: "Như HCM ra đi tìm đường nhưng luôn hướng về Tổ quốc — mỗi cá nhân khi bước ra thế giới cần giữ vững giá trị cốt lõi, bản sắc VN."
+  },
+  {
+    q: "Quan điểm \"xây đi đôi với chống\" của HCM được bài thuyết trình áp dụng cho cá nhân như thế nào?",
+    opts: ["Chỉ xây dựng bản thân là đủ", "Xây dựng bản thân đồng thời chống thói xấu: chủ nghĩa cá nhân, lười biếng, lãng phí", "Chỉ cần chống lại kẻ thù bên ngoài", "Không liên quan đến cá nhân"],
+    answer: 1,
+    explain: "Bài học thứ 6: \"xây\" đi đôi với \"chống\" — xây dựng bản thân đồng thời chống lại những \"tác phong xấu\" như HCM đã dạy."
+  },
+  {
+    q: "Theo bài thuyết trình, hệ thống động lực mạnh mẽ nhất của CNXH được tạo từ 3 yếu tố nào?",
+    opts: ["Kinh tế, quân sự, ngoại giao", "Lợi ích của dân, dân chủ, đoàn kết toàn dân", "Đảng, Nhà nước, Quân đội", "Công nghiệp hóa, hiện đại hóa, đô thị hóa"],
+    answer: 1,
+    explain: "Trong tư tưởng HCM: lợi ích của dân, dân chủ của dân, đoàn kết toàn dân gắn bó hữu cơ — tạo nên hệ thống động lực mạnh mẽ nhất."
   }
 ];
 
-let currentQ = 0;
-let score = 0;
-let answered = false;
+// ===== GAME STATE =====
+let currentQ = 0, score = 0, answered = false;
+let timerInterval = null, startTime = 0, elapsedTime = 0;
+let playerName = '';
 
-function initGame() {
-  const progressEl = document.getElementById('gameProgress');
-  progressEl.innerHTML = '';
+function startGame() {
+  const nameInput = document.getElementById('playerName');
+  playerName = nameInput.value.trim();
+  if (!playerName) { nameInput.style.borderColor = '#e74c3c'; nameInput.focus(); return; }
+
+  document.getElementById('gameIntro').style.display = 'none';
+  document.getElementById('gameArea').style.display = 'block';
+
+  currentQ = 0; score = 0; elapsedTime = 0;
+  startTime = Date.now();
+
+  // Init progress dots
+  const prog = document.getElementById('gameProgress');
+  prog.innerHTML = '';
   for (let i = 0; i < quizData.length; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'game-progress-dot';
-    dot.id = 'dot-' + i;
-    progressEl.appendChild(dot);
+    const d = document.createElement('div');
+    d.className = 'game-progress-dot';
+    d.id = 'dot-' + i;
+    prog.appendChild(d);
   }
+
+  startTimer();
   loadQuestion();
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+    const m = String(Math.floor(elapsedTime / 60)).padStart(2, '0');
+    const s = String(elapsedTime % 60).padStart(2, '0');
+    document.getElementById('timerValue').textContent = `${m}:${s}`;
+  }, 200);
 }
 
 function loadQuestion() {
@@ -209,15 +196,15 @@ function loadQuestion() {
   document.getElementById('gameScore').textContent = score;
   document.getElementById('gameTotalQ').textContent = quizData.length;
 
-  const optContainer = document.getElementById('gameOptions');
-  optContainer.innerHTML = '';
+  const optC = document.getElementById('gameOptions');
+  optC.innerHTML = '';
   const labels = ['A', 'B', 'C', 'D'];
   q.opts.forEach((opt, i) => {
     const btn = document.createElement('button');
     btn.className = 'game-option';
     btn.innerHTML = `<span class="opt-label">${labels[i]}</span><span>${opt}</span>`;
     btn.onclick = () => selectAnswer(i, btn);
-    optContainer.appendChild(btn);
+    optC.appendChild(btn);
   });
 
   document.getElementById('gameExplanation').classList.remove('show');
@@ -230,29 +217,29 @@ function selectAnswer(idx, btn) {
   answered = true;
   const q = quizData[currentQ];
   const allBtns = document.querySelectorAll('.game-option');
-
   allBtns.forEach(b => b.classList.add('disabled'));
+
+  const dot = document.getElementById('dot-' + currentQ);
+  dot.classList.remove('active');
 
   if (idx === q.answer) {
     btn.classList.add('correct');
     score++;
     document.getElementById('gameScore').textContent = score;
-    document.getElementById('dot-' + currentQ).classList.remove('active');
-    document.getElementById('dot-' + currentQ).classList.add('correct');
+    dot.classList.add('correct');
   } else {
     btn.classList.add('wrong');
     allBtns[q.answer].classList.add('correct');
-    document.getElementById('dot-' + currentQ).classList.remove('active');
-    document.getElementById('dot-' + currentQ).classList.add('wrong');
+    dot.classList.add('wrong');
   }
 
-  const explEl = document.getElementById('gameExplanation');
-  explEl.textContent = '💡 ' + q.explain;
-  explEl.classList.add('show');
+  const expl = document.getElementById('gameExplanation');
+  expl.textContent = '💡 ' + q.explain;
+  expl.classList.add('show');
 
-  const nextBtn = document.getElementById('gameNext');
-  nextBtn.textContent = currentQ < quizData.length - 1 ? 'Câu tiếp theo →' : 'Xem kết quả 🏆';
-  nextBtn.classList.add('show');
+  const nxt = document.getElementById('gameNext');
+  nxt.textContent = currentQ < quizData.length - 1 ? 'Câu tiếp theo →' : 'Xem kết quả 🏆';
+  nxt.classList.add('show');
 }
 
 function nextQuestion() {
@@ -260,55 +247,117 @@ function nextQuestion() {
   if (currentQ < quizData.length) {
     loadQuestion();
   } else {
+    clearInterval(timerInterval);
+    elapsedTime = Math.floor((Date.now() - startTime) / 1000);
     showResult();
   }
 }
 
 function showResult() {
   document.getElementById('gameArea').style.display = 'none';
-  const resultEl = document.getElementById('gameResult');
-  resultEl.classList.add('show');
+  const res = document.getElementById('gameResult');
+  res.classList.add('show');
 
   const pct = Math.round((score / quizData.length) * 100);
+  const m = String(Math.floor(elapsedTime / 60)).padStart(2, '0');
+  const s = String(elapsedTime % 60).padStart(2, '0');
+
   document.getElementById('resultScore').textContent = `${score} / ${quizData.length} (${pct}%)`;
+  document.getElementById('resultTime').textContent = `⏱️ Thời gian: ${m}:${s}`;
 
   let icon, title, msg;
-  if (pct >= 90) {
-    icon = '🏆'; title = 'Xuất sắc!';
-    msg = 'Bạn hiểu rất sâu về tư tưởng Hồ Chí Minh! Bác Hồ sẽ rất tự hào!';
-  } else if (pct >= 70) {
-    icon = '🌟'; title = 'Rất giỏi!';
-    msg = 'Kiến thức của bạn rất vững! Hãy tiếp tục tìm hiểu thêm nhé.';
-  } else if (pct >= 50) {
-    icon = '👍'; title = 'Khá tốt!';
-    msg = 'Bạn đã nắm được những điểm cơ bản. Hãy ôn lại Chương III để hiểu sâu hơn!';
-  } else {
-    icon = '📖'; title = 'Cần cố gắng thêm!';
-    msg = 'Hãy đọc lại nội dung Chương III và thử lại nhé. Kiến thức sẽ đến qua sự kiên trì!';
-  }
+  if (pct >= 90) { icon = '🏆'; title = 'Xuất sắc!'; msg = 'Bạn hiểu rất sâu về tư tưởng HCM!'; }
+  else if (pct >= 70) { icon = '🌟'; title = 'Rất giỏi!'; msg = 'Kiến thức rất vững! Tiếp tục phát huy!'; }
+  else if (pct >= 50) { icon = '👍'; title = 'Khá tốt!'; msg = 'Hãy ôn lại Chương III để hiểu sâu hơn!'; }
+  else { icon = '📖'; title = 'Cần cố gắng!'; msg = 'Đọc lại nội dung và thử lại nhé!'; }
+
   document.getElementById('resultIcon').textContent = icon;
   document.getElementById('resultTitle').textContent = title;
   document.getElementById('resultMsg').textContent = msg;
+
+  // Submit to leaderboard
+  wsSend({ type: 'submit_score', data: { name: playerName, score, time: elapsedTime, total: quizData.length } });
+
+  // Fallback: also store locally
+  const local = JSON.parse(localStorage.getItem('hcm202_lb') || '[]');
+  local.push({ name: playerName, score, time: elapsedTime, total: quizData.length, ts: Date.now() });
+  local.sort((a, b) => b.score !== a.score ? b.score - a.score : a.time - b.time);
+  localStorage.setItem('hcm202_lb', JSON.stringify(local.slice(0, 20)));
+  if (!leaderboardData.length) { leaderboardData = local; renderLeaderboard(); }
 }
 
 function restartGame() {
-  currentQ = 0;
-  score = 0;
-  document.getElementById('gameArea').style.display = 'block';
   document.getElementById('gameResult').classList.remove('show');
-  document.querySelectorAll('.game-progress-dot').forEach(d => {
-    d.className = 'game-progress-dot';
-  });
-  loadQuestion();
+  document.getElementById('gameIntro').style.display = 'block';
+  document.getElementById('gameArea').style.display = 'none';
+  document.querySelectorAll('.game-progress-dot').forEach(d => d.className = 'game-progress-dot');
 }
 
-// Init game when section is visible
-const gameObserver = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      initGame();
-      gameObserver.disconnect();
+function resetLeaderboard() {
+  if (!confirm('Bạn có chắc muốn xóa bảng xếp hạng?')) return;
+  wsSend({ type: 'reset' });
+  localStorage.removeItem('hcm202_lb');
+  leaderboardData = [];
+  renderLeaderboard();
+}
+
+// ===== RENDER LEADERBOARD =====
+function renderLeaderboard() {
+  const data = leaderboardData;
+
+  // Podium
+  for (let i = 0; i < 3; i++) {
+    const el = document.getElementById('podium' + (i + 1));
+    if (!el) continue;
+    if (data[i]) {
+      el.querySelector('.podium-name').textContent = data[i].name;
+      const m = String(Math.floor(data[i].time / 60)).padStart(2, '0');
+      const s = String(data[i].time % 60).padStart(2, '0');
+      el.querySelector('.podium-score-text').textContent = `${data[i].score}/${data[i].total} • ${m}:${s}`;
+    } else {
+      el.querySelector('.podium-name').textContent = '---';
+      el.querySelector('.podium-score-text').textContent = '--';
     }
+  }
+
+  // List
+  const list = document.getElementById('lbList');
+  const empty = document.getElementById('lbEmpty');
+
+  // Remove old rows
+  list.querySelectorAll('.lb-row').forEach(r => r.remove());
+
+  if (!data.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  data.forEach((entry, i) => {
+    const row = document.createElement('div');
+    row.className = 'lb-row';
+    row.style.animationDelay = (i * 0.1) + 's';
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+    const m = String(Math.floor(entry.time / 60)).padStart(2, '0');
+    const s = String(entry.time % 60).padStart(2, '0');
+    row.innerHTML = `
+      <span class="lb-rank">${medal}</span>
+      <span class="lb-player">${entry.name}</span>
+      <span class="lb-score-val">${entry.score}/${entry.total}</span>
+      <span class="lb-time-val">⏱ ${m}:${s}</span>
+    `;
+    list.appendChild(row);
   });
-}, { threshold: 0.3 });
-gameObserver.observe(document.getElementById('gameContainer'));
+}
+
+// Init leaderboard from localStorage if no WS
+setTimeout(() => {
+  if (!leaderboardData.length) {
+    const local = JSON.parse(localStorage.getItem('hcm202_lb') || '[]');
+    if (local.length) { leaderboardData = local; renderLeaderboard(); }
+  }
+}, 2000);
+
+// Auto-scroll to minigame if hash
+if (location.hash === '#minigame') {
+  setTimeout(() => {
+    document.getElementById('minigame').scrollIntoView({ behavior: 'smooth' });
+  }, 500);
+}

@@ -1,0 +1,11 @@
+{
+  "name": "hcm202-presentation",
+  "version": "1.0.0",
+  "description": "HCM202 Creative Presentation with Minigame & Leaderboard",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

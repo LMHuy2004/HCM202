@@ -6,6 +6,7 @@
   <meta name="description" content="Sản phẩm sáng tạo HCM202 - Tư tưởng Hồ Chí Minh về độc lập dân tộc và chủ nghĩa xã hội">
   <title>Dream Come True | HCM202 - Tư tưởng HCM về Độc lập Dân tộc</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -21,6 +22,7 @@
     <a href="#apply">Vận dụng</a>
     <a href="#lessons">Bài học</a>
     <a href="#minigame">🎮 Minigame</a>
+    <a href="#leaderboard">🏆 Xếp hạng</a>
   </div>
 </nav>
 
@@ -30,10 +32,7 @@
   <h1 class="hero-title">Từ Quan Niệm Về Độc Lập Dân Tộc<br>Đến Bài Học Tự Chủ Cho Cá Nhân</h1>
   <p class="hero-subtitle">Tư tưởng Hồ Chí Minh về độc lập dân tộc, chủ quyền quốc gia và bài học tự chủ, bước ra thế giới của mỗi cá nhân trong thời đại hội nhập.</p>
   <div class="hero-team"><span class="star">⭐</span> Nhóm: Dream Come True</div>
-  <div class="hero-scroll">
-    <span>Cuộn xuống</span>
-    <span class="arrow">↓</span>
-  </div>
+  <div class="hero-scroll"><span>Cuộn xuống</span><span class="arrow">↓</span></div>
 </section>
 
 <!-- ========== ĐẶT VẤN ĐỀ ========== -->
@@ -42,7 +41,6 @@
   <p class="section-label fade-in">Phần 1</p>
   <h2 class="section-title fade-in">Đặt Vấn Đề</h2>
   <p class="section-desc fade-in">Trong bối cảnh hội nhập quốc tế sâu rộng, quan niệm về "độc lập dân tộc" của Hồ Chí Minh mang ý nghĩa thời đại hơn bao giờ hết.</p>
-
   <div class="cards-grid">
     <div class="card fade-in">
       <div class="card-icon">🌍</div>
@@ -68,34 +66,30 @@
   <p class="section-label fade-in">Phần 2</p>
   <h2 class="section-title fade-in">Cơ Sở Lý Thuyết</h2>
   <p class="section-desc fade-in">Khái quát các luận điểm cốt lõi trong tư tưởng HCM về độc lập dân tộc và cách mạng giải phóng dân tộc.</p>
-
-  <!-- Quote -->
   <div class="quote-block fade-in">
     <p class="quote-text">Không có gì quý hơn độc lập, tự do.</p>
     <p class="quote-author">— Hồ Chí Minh —</p>
   </div>
-
-  <!-- 4 trụ cột -->
   <div class="key-points fade-in">
     <div class="key-point">
       <span class="key-point-num">①</span>
       <div>
         <p class="key-point-title">Độc lập, tự do là quyền thiêng liêng, bất khả xâm phạm</p>
-        <p class="key-point-desc">Dựa trên Tuyên ngôn Nhân quyền Pháp 1791, Tuyên ngôn Độc lập Mỹ 1776 — HCM khẳng định quyền dân tộc gắn liền với quyền con người: "Tất cả các dân tộc trên thế giới đều sinh ra bình đẳng".</p>
+        <p class="key-point-desc">Dựa trên Tuyên ngôn Nhân quyền Pháp 1791, Tuyên ngôn Độc lập Mỹ 1776 — HCM khẳng định: "Tất cả các dân tộc trên thế giới đều sinh ra bình đẳng".</p>
       </div>
     </div>
     <div class="key-point">
       <span class="key-point-num">②</span>
       <div>
         <p class="key-point-title">Độc lập gắn liền tự do, hạnh phúc của nhân dân</p>
-        <p class="key-point-desc">"Nước độc lập mà dân không hưởng hạnh phúc tự do, thì độc lập cũng chẳng có nghĩa lý gì." — Độc lập phải đi đôi với cơm ăn, áo mặc, học hành cho nhân dân.</p>
+        <p class="key-point-desc">"Nước độc lập mà dân không hưởng hạnh phúc tự do, thì độc lập cũng chẳng có nghĩa lý gì." — Độc lập phải đi đôi với cơm ăn, áo mặc, học hành.</p>
       </div>
     </div>
     <div class="key-point">
       <span class="key-point-num">③</span>
       <div>
         <p class="key-point-title">Độc lập thật sự, hoàn toàn và triệt để</p>
-        <p class="key-point-desc">Độc lập mà không có quyền tự quyết về ngoại giao, không có quân đội riêng, không có nền tài chính riêng thì không có ý nghĩa. Phải độc lập trên tất cả các lĩnh vực.</p>
+        <p class="key-point-desc">Độc lập mà không có quyền tự quyết về ngoại giao, quân đội, tài chính thì không có ý nghĩa. Phải độc lập trên tất cả các lĩnh vực.</p>
       </div>
     </div>
     <div class="key-point">
@@ -106,35 +100,13 @@
       </div>
     </div>
   </div>
-
-  <!-- Timeline CMGPDT -->
   <h3 class="section-title fade-in" style="margin-top:60px; font-size:1.6rem;">Con Đường Cách Mạng Giải Phóng Dân Tộc</h3>
   <div class="timeline fade-in">
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">1911 – Ra đi tìm đường cứu nước</p>
-      <div class="timeline-content">HCM quyết định không đi theo con đường CMTS như Pháp, Mỹ vì "tiếng là cộng hoà và dân chủ, kỳ thực trong thì nó tước lực công nông, ngoài thì nó áp bức thuộc địa."</div>
-    </div>
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">1917 – Cách mạng Tháng Mười Nga</p>
-      <div class="timeline-content">HCM tìm thấy con đường đúng đắn: "Chỉ có cách mệnh Nga là đã thành công và thành công đến nơi… Nói tóm lại là phải theo chủ nghĩa Mác Khắc Tư và Lênin."</div>
-    </div>
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">1920 – Đọc Luận cương của Lênin</p>
-      <div class="timeline-content">"Luận cương của Lênin làm cho tôi rất cảm động, phấn khởi, sáng tỏ, tin tưởng biết bao! Tôi vui mừng đến phát khóc lên." — Con đường CMVS được xác định.</div>
-    </div>
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">1930 – Thành lập Đảng Cộng sản</p>
-      <div class="timeline-content">Chánh cương vắn tắt xác định: Làm tư sản dân quyền cách mạng và thổ địa cách mạng để đi tới xã hội cộng sản — Độc lập dân tộc gắn liền với CNXH.</div>
-    </div>
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">1945 – Cách mạng Tháng Tám & Tuyên ngôn Độc lập</p>
-      <div class="timeline-content">"Nước Việt Nam có quyền hưởng tự do và độc lập, và sự thực đã thành một nước tự do và độc lập." — Kết hợp đấu tranh chính trị với lực lượng vũ trang.</div>
-    </div>
+    <div class="timeline-item"><div class="timeline-dot"></div><p class="timeline-year">1911 – Ra đi tìm đường cứu nước</p><div class="timeline-content">HCM không chọn con đường CMTS như Pháp, Mỹ vì "tiếng là cộng hoà và dân chủ, kỳ thực trong thì nó tước lực công nông, ngoài thì nó áp bức thuộc địa."</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><p class="timeline-year">1917 – Ảnh hưởng CM Tháng Mười Nga</p><div class="timeline-content">"Chỉ có cách mệnh Nga là đã thành công và thành công đến nơi… Nói tóm lại là phải theo chủ nghĩa Mác Khắc Tư và Lênin."</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><p class="timeline-year">1920 – Đọc Luận cương của Lênin</p><div class="timeline-content">"Luận cương của Lênin làm cho tôi rất cảm động, phấn khởi, sáng tỏ, tin tưởng biết bao! Tôi vui mừng đến phát khóc lên."</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><p class="timeline-year">1930 – Thành lập Đảng & Chánh cương vắn tắt</p><div class="timeline-content">Xác định: Làm tư sản dân quyền CM và thổ địa CM để đi tới xã hội cộng sản — Độc lập dân tộc gắn liền với CNXH.</div></div>
+    <div class="timeline-item"><div class="timeline-dot"></div><p class="timeline-year">1945 – CM Tháng Tám & Tuyên ngôn Độc lập</p><div class="timeline-content">"Nước Việt Nam có quyền hưởng tự do và độc lập, và sự thực đã thành một nước tự do và độc lập."</div></div>
   </div>
 </section>
 
@@ -144,38 +116,13 @@
   <p class="section-label fade-in">Phần 3</p>
   <h2 class="section-title fade-in">Cơ Sở Vận Dụng</h2>
   <p class="section-desc fade-in">Phân tích sự tương đồng giữa tư tưởng HCM và bối cảnh hiện nay — từ chủ quyền quốc gia đến tinh thần tự chủ cá nhân.</p>
-
   <div class="cards-grid">
-    <div class="card fade-in">
-      <div class="card-icon">🏛️</div>
-      <h3 class="card-title">Chủ quyền quốc gia trong thời đại số</h3>
-      <p class="card-text">Chủ quyền không chỉ là lãnh thổ — còn là chủ quyền dữ liệu, an ninh mạng, kinh tế số. Tư tưởng "độc lập thật sự, hoàn toàn" của HCM đặt ra yêu cầu làm chủ công nghệ, không lệ thuộc nền tảng nước ngoài.</p>
-    </div>
-    <div class="card fade-in">
-      <div class="card-icon">🌐</div>
-      <h3 class="card-title">Hội nhập nhưng không hòa tan</h3>
-      <p class="card-text">Như HCM tiếp thu tinh hoa Đông - Tây nhưng luôn giữ gốc dân tộc, Việt Nam hội nhập quốc tế nhưng vẫn giữ vững bản sắc văn hóa, độc lập về đường lối chính trị.</p>
-    </div>
-    <div class="card fade-in">
-      <div class="card-icon">👤</div>
-      <h3 class="card-title">Tự chủ cá nhân — "Độc lập" phiên bản cá nhân</h3>
-      <p class="card-text">Mỗi cá nhân cần "độc lập" trong tư duy, tài chính, kỹ năng. Như dân tộc cần tự chủ kinh tế, mỗi người cần tự chủ nghề nghiệp để không bị phụ thuộc.</p>
-    </div>
-    <div class="card fade-in">
-      <div class="card-icon">📚</div>
-      <h3 class="card-title">Kinh tế tri thức & tự chủ công nghệ</h3>
-      <p class="card-text">HCM nhấn mạnh "Muốn tiến lên CNXH phải phát triển kinh tế và văn hóa." Ngày nay, tự chủ công nghệ (chip, AI, phần mềm) là yếu tố sống còn của quốc gia.</p>
-    </div>
-    <div class="card fade-in">
-      <div class="card-icon">🤝</div>
-      <h3 class="card-title">Đoàn kết — Sức mạnh tập thể</h3>
-      <p class="card-text">Tư tưởng đại đoàn kết của HCM vẫn là nền tảng. Trong doanh nghiệp, startup hay cộng đồng — sức mạnh luôn đến từ sự đoàn kết, hợp tác có mục tiêu chung.</p>
-    </div>
-    <div class="card fade-in">
-      <div class="card-icon">⚡</div>
-      <h3 class="card-title">Tinh thần chủ động, sáng tạo</h3>
-      <p class="card-text">HCM khẳng định CMGPDT có thể thắng lợi trước CM ở chính quốc — tinh thần chủ động, không chờ đợi. Mỗi cá nhân cũng cần chủ động tạo cơ hội, không thụ động chờ thời.</p>
-    </div>
+    <div class="card fade-in"><div class="card-icon">🏛️</div><h3 class="card-title">Chủ quyền quốc gia trong thời đại số</h3><p class="card-text">Chủ quyền không chỉ là lãnh thổ — còn là chủ quyền dữ liệu, an ninh mạng, kinh tế số. Tư tưởng "độc lập thật sự, hoàn toàn" đặt ra yêu cầu làm chủ công nghệ.</p></div>
+    <div class="card fade-in"><div class="card-icon">🌐</div><h3 class="card-title">Hội nhập nhưng không hòa tan</h3><p class="card-text">Như HCM tiếp thu tinh hoa Đông - Tây nhưng giữ gốc dân tộc, Việt Nam hội nhập quốc tế nhưng vẫn giữ vững bản sắc văn hóa.</p></div>
+    <div class="card fade-in"><div class="card-icon">👤</div><h3 class="card-title">Tự chủ cá nhân — "Độc lập" phiên bản cá nhân</h3><p class="card-text">Mỗi cá nhân cần "độc lập" trong tư duy, tài chính, kỹ năng. Như dân tộc cần tự chủ kinh tế, mỗi người cần tự chủ nghề nghiệp.</p></div>
+    <div class="card fade-in"><div class="card-icon">📚</div><h3 class="card-title">Kinh tế tri thức & tự chủ công nghệ</h3><p class="card-text">HCM: "Muốn tiến lên CNXH phải phát triển kinh tế và văn hóa." Ngày nay, tự chủ công nghệ (chip, AI) là yếu tố sống còn.</p></div>
+    <div class="card fade-in"><div class="card-icon">🤝</div><h3 class="card-title">Đoàn kết — Sức mạnh tập thể</h3><p class="card-text">Tư tưởng đại đoàn kết vẫn là nền tảng. Trong doanh nghiệp, startup hay cộng đồng — sức mạnh luôn đến từ sự hợp tác.</p></div>
+    <div class="card fade-in"><div class="card-icon">⚡</div><h3 class="card-title">Tinh thần chủ động, sáng tạo</h3><p class="card-text">HCM khẳng định CMGPDT có thể thắng lợi trước CM ở chính quốc — tinh thần chủ động, không chờ đợi.</p></div>
   </div>
 </section>
 
@@ -185,59 +132,57 @@
   <p class="section-label fade-in">Phần 4</p>
   <h2 class="section-title fade-in">Giải Pháp & Bài Học</h2>
   <p class="section-desc fade-in">Đề xuất bài học từ việc vận dụng tư tưởng HCM vào cuộc sống mỗi cá nhân.</p>
-
   <div class="quote-block fade-in">
     <p class="quote-text">Dù khó khăn gian khổ đến mấy, nhân dân ta nhất định sẽ hoàn toàn thắng lợi.</p>
     <p class="quote-author">— Hồ Chí Minh —</p>
   </div>
-
   <div class="cards-grid" style="max-width:900px;">
-    <div class="card fade-in">
-      <div class="card-icon">🧠</div>
-      <h3 class="card-title">1. Tự chủ tư duy</h3>
-      <p class="card-text">Như HCM tiếp thu Mác-Lênin nhưng vận dụng sáng tạo vào điều kiện VN, mỗi người cần tự chủ trong suy nghĩ — phân tích, đánh giá thông tin độc lập, không a dua theo đám đông.</p>
-    </div>
-    <div class="card fade-in">
-      <div class="card-icon">💰</div>
-      <h3 class="card-title">2. Tự chủ tài chính</h3>
-      <p class="card-text">"Độc lập mà dân không có cơm ăn thì không có ý nghĩa." Tương tự, tự do cá nhân bắt đầu từ tự chủ tài chính — học quản lý tài chính, đầu tư bản thân.</p>
-    </div>
-    <div class="card fade-in">
-      <div class="card-icon">🎯</div>
-      <h3 class="card-title">3. Giữ gốc, vươn xa</h3>
-      <p class="card-text">HCM ra đi tìm đường nhưng luôn hướng về Tổ quốc. Khi bước ra thế giới, hãy giữ vững giá trị cốt lõi, bản sắc văn hóa Việt Nam — đó là "gốc" để vươn xa.</p>
-    </div>
-    <div class="card fade-in">
-      <div class="card-icon">🔗</div>
-      <h3 class="card-title">4. Xây dựng cộng đồng</h3>
-      <p class="card-text">"Đoàn kết, đoàn kết, đại đoàn kết. Thành công, thành công, đại thành công." Xây dựng mạng lưới quan hệ, hỗ trợ lẫn nhau — sức mạnh nằm ở tập thể.</p>
-    </div>
-    <div class="card fade-in">
-      <div class="card-icon">🚀</div>
-      <h3 class="card-title">5. Chủ động & Sáng tạo</h3>
-      <p class="card-text">Tinh thần "CMGPDT có thể thắng trước chính quốc" — không chờ đợi điều kiện hoàn hảo. Hãy chủ động hành động, sáng tạo giải pháp trong mọi hoàn cảnh.</p>
-    </div>
-    <div class="card fade-in">
-      <div class="card-icon">🛡️</div>
-      <h3 class="card-title">6. "Xây" đi đôi với "Chống"</h3>
-      <p class="card-text">Xây dựng bản thân đồng thời chống lại thói xấu: chủ nghĩa cá nhân, lười biếng, lãng phí. Như HCM dạy: phải chống lại những "tác phong xấu" để tiến lên.</p>
-    </div>
+    <div class="card fade-in"><div class="card-icon">🧠</div><h3 class="card-title">1. Tự chủ tư duy</h3><p class="card-text">Như HCM tiếp thu Mác-Lênin nhưng vận dụng sáng tạo vào VN, mỗi người cần phân tích, đánh giá thông tin độc lập, không a dua theo đám đông.</p></div>
+    <div class="card fade-in"><div class="card-icon">💰</div><h3 class="card-title">2. Tự chủ tài chính</h3><p class="card-text">"Độc lập mà dân không có cơm ăn thì không có ý nghĩa." Tự do cá nhân bắt đầu từ tự chủ tài chính.</p></div>
+    <div class="card fade-in"><div class="card-icon">🎯</div><h3 class="card-title">3. Giữ gốc, vươn xa</h3><p class="card-text">HCM ra đi nhưng luôn hướng về Tổ quốc. Khi bước ra thế giới, hãy giữ vững giá trị cốt lõi, bản sắc Việt Nam.</p></div>
+    <div class="card fade-in"><div class="card-icon">🔗</div><h3 class="card-title">4. Xây dựng cộng đồng</h3><p class="card-text">"Đoàn kết, đoàn kết, đại đoàn kết." Xây dựng mạng lưới quan hệ, hỗ trợ lẫn nhau.</p></div>
+    <div class="card fade-in"><div class="card-icon">🚀</div><h3 class="card-title">5. Chủ động & Sáng tạo</h3><p class="card-text">Không chờ điều kiện hoàn hảo. Hãy chủ động hành động, sáng tạo giải pháp trong mọi hoàn cảnh.</p></div>
+    <div class="card fade-in"><div class="card-icon">🛡️</div><h3 class="card-title">6. "Xây" đi đôi với "Chống"</h3><p class="card-text">Xây dựng bản thân đồng thời chống lại thói xấu: chủ nghĩa cá nhân, lười biếng, lãng phí.</p></div>
   </div>
 </section>
 
-<!-- ========== MINIGAME ========== -->
+<!-- ========== QR CODE + MINIGAME ========== -->
 <section class="section" id="minigame">
   <span class="section-number">🎮</span>
   <p class="section-label fade-in">Tương tác</p>
   <h2 class="section-title fade-in">🎮 Minigame — Ai Hiểu Bác Hơn?</h2>
-  <p class="section-desc fade-in">Trả lời 10 câu hỏi trắc nghiệm về tư tưởng HCM trong Chương III. Sẵn sàng chưa?</p>
+  <p class="section-desc fade-in">Quét mã QR hoặc nhập link để tham gia. Trả lời 10 câu hỏi nhanh và chính xác nhất!</p>
 
-  <div class="game-container fade-in" id="gameContainer">
-    <div class="game-header">
-      <div class="game-progress" id="gameProgress"></div>
-      <div class="game-score">Điểm: <span id="gameScore">0</span> / <span id="gameTotalQ">10</span></div>
+  <!-- QR Code Box -->
+  <div class="qr-box fade-in" id="qrBox">
+    <div class="qr-inner">
+      <div id="qrcode"></div>
+      <p class="qr-url" id="qrUrl">Đang tải...</p>
+      <p class="qr-hint">📱 Quét mã bằng điện thoại để tham gia</p>
     </div>
-    <div id="gameArea">
+  </div>
+
+  <!-- Game Container -->
+  <div class="game-container fade-in" id="gameContainer">
+    <!-- Step 1: Enter Name -->
+    <div id="gameIntro">
+      <div class="game-header"><h3 style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:8px;">Sẵn sàng chưa?</h3><p style="color:var(--text-muted);margin-bottom:24px;">Nhập tên của bạn và bắt đầu thử thách!</p></div>
+      <div class="name-input-group">
+        <input type="text" id="playerName" class="name-input" placeholder="Nhập tên của bạn..." maxlength="20" autocomplete="off">
+        <button class="btn-start" id="btnStart" onclick="startGame()">Bắt đầu 🚀</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Quiz -->
+    <div id="gameArea" style="display:none;">
+      <div class="game-header">
+        <div class="game-timer" id="gameTimer">
+          <span class="timer-icon">⏱️</span>
+          <span class="timer-value" id="timerValue">00:00</span>
+        </div>
+        <div class="game-progress" id="gameProgress"></div>
+        <div class="game-score">Điểm: <span id="gameScore">0</span> / <span id="gameTotalQ">10</span></div>
+      </div>
       <p class="game-question-num" id="gameQNum"></p>
       <p class="game-question" id="gameQuestion"></p>
       <div class="game-options" id="gameOptions"></div>
@@ -246,13 +191,56 @@
         <button class="game-next" id="gameNext" onclick="nextQuestion()">Câu tiếp theo →</button>
       </div>
     </div>
+
+    <!-- Step 3: Result -->
     <div class="game-result" id="gameResult">
       <div class="game-result-icon" id="resultIcon"></div>
       <h3 class="game-result-title" id="resultTitle"></h3>
       <p class="game-result-score" id="resultScore"></p>
+      <p class="game-result-time" id="resultTime"></p>
       <p class="game-result-msg" id="resultMsg"></p>
       <button class="game-restart" onclick="restartGame()">🔄 Chơi lại</button>
     </div>
+  </div>
+</section>
+
+<!-- ========== LEADERBOARD ========== -->
+<section class="section" id="leaderboard">
+  <span class="section-number">🏆</span>
+  <p class="section-label fade-in">Bảng xếp hạng</p>
+  <h2 class="section-title fade-in">🏆 Top Cao Thủ</h2>
+  <p class="section-desc fade-in">3 người chơi có điểm cao nhất và nhanh nhất sẽ vinh danh tại đây!</p>
+
+  <!-- Podium -->
+  <div class="podium fade-in" id="podium">
+    <div class="podium-item podium-2" id="podium2">
+      <div class="podium-avatar">🥈</div>
+      <p class="podium-name">---</p>
+      <p class="podium-score-text">--</p>
+      <div class="podium-bar bar-2"><span>2</span></div>
+    </div>
+    <div class="podium-item podium-1" id="podium1">
+      <div class="podium-crown">👑</div>
+      <div class="podium-avatar">🥇</div>
+      <p class="podium-name">---</p>
+      <p class="podium-score-text">--</p>
+      <div class="podium-bar bar-1"><span>1</span></div>
+    </div>
+    <div class="podium-item podium-3" id="podium3">
+      <div class="podium-avatar">🥉</div>
+      <p class="podium-name">---</p>
+      <p class="podium-score-text">--</p>
+      <div class="podium-bar bar-3"><span>3</span></div>
+    </div>
+  </div>
+
+  <!-- Full list -->
+  <div class="lb-list fade-in" id="lbList">
+    <p class="lb-empty" id="lbEmpty">Chưa có ai tham gia. Hãy là người đầu tiên! 🎯</p>
+  </div>
+
+  <div style="text-align:center;margin-top:30px;" class="fade-in">
+    <button class="game-restart" onclick="resetLeaderboard()" style="font-size:0.85rem;padding:10px 24px;">🗑️ Reset bảng xếp hạng</button>
   </div>
 </section>
 
