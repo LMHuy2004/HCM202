@@ -423,26 +423,36 @@
 
 <script src="script.js"></script>
 <script>
-  // Hamburger menu toggle
-  const hamburger = document.getElementById('navHamburger');
-  const navLinks = document.getElementById('navLinks');
-  const overlay = document.getElementById('navOverlay');
+  document.addEventListener('DOMContentLoaded', function() {
+    var _hamburgerBtn = document.getElementById('navHamburger');
+    var _mobileNavLinks = document.getElementById('navLinks');
+    var _navOverlay = document.getElementById('navOverlay');
 
-  hamburger.addEventListener('click', () => {
-    const isOpen = navLinks.classList.toggle('nav-open');
-    overlay.classList.toggle('nav-overlay-open', isOpen);
-    hamburger.classList.toggle('nav-hamburger-open', isOpen);
-    hamburger.setAttribute('aria-expanded', isOpen);
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (!_hamburgerBtn) return;
+
+    _hamburgerBtn.addEventListener('click', function() {
+      var isOpen = _mobileNavLinks.classList.toggle('nav-open');
+      _navOverlay.classList.toggle('nav-overlay-open', isOpen);
+      _hamburgerBtn.classList.toggle('nav-hamburger-open', isOpen);
+      _hamburgerBtn.setAttribute('aria-expanded', String(isOpen));
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    _navOverlay.addEventListener('click', function() {
+      _closeHamburgerMenu();
+    });
+
+    function _closeHamburgerMenu() {
+      _mobileNavLinks.classList.remove('nav-open');
+      _navOverlay.classList.remove('nav-overlay-open');
+      _hamburgerBtn.classList.remove('nav-hamburger-open');
+      _hamburgerBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    // Expose globally for onclick attributes
+    window.closeMenu = _closeHamburgerMenu;
   });
-
-  function closeMenu() {
-    navLinks.classList.remove('nav-open');
-    overlay.classList.remove('nav-overlay-open');
-    hamburger.classList.remove('nav-hamburger-open');
-    hamburger.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-  }
 </script>
 </body>
 </html>
