@@ -15,15 +15,19 @@
 <!-- NAVIGATION -->
 <nav class="nav" id="mainNav">
   <a href="#hero" class="nav-logo">Dream Come True ✦</a>
-  <div class="nav-links">
-    <a href="#hero" class="active">Trang chủ</a>
-    <a href="#problem">Đặt vấn đề</a>
-    <a href="#theory">Lý thuyết</a>
-    <a href="#apply">Vận dụng</a>
-    <a href="#lessons">Bài học</a>
-    <a href="#minigame">🎮 Minigame</a>
-    <a href="#ai-used">🤖 AI Used</a>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="#hero" class="active" onclick="closeMenu()">Trang chủ</a>
+    <a href="#problem" onclick="closeMenu()">Đặt vấn đề</a>
+    <a href="#theory" onclick="closeMenu()">Lý thuyết</a>
+    <a href="#apply" onclick="closeMenu()">Vận dụng</a>
+    <a href="#lessons" onclick="closeMenu()">Bài học</a>
+    <a href="#minigame" onclick="closeMenu()">🎮 Minigame</a>
+    <a href="#ai-used" onclick="closeMenu()">🤖 AI Used</a>
   </div>
+  <div class="nav-overlay" id="navOverlay" onclick="closeMenu()"></div>
 </nav>
 
 <!-- ========== HERO ========== -->
@@ -418,5 +422,27 @@
 </footer>
 
 <script src="script.js"></script>
+<script>
+  // Hamburger menu toggle
+  const hamburger = document.getElementById('navHamburger');
+  const navLinks = document.getElementById('navLinks');
+  const overlay = document.getElementById('navOverlay');
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('nav-open');
+    overlay.classList.toggle('nav-overlay-open', isOpen);
+    hamburger.classList.toggle('nav-hamburger-open', isOpen);
+    hamburger.setAttribute('aria-expanded', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  function closeMenu() {
+    navLinks.classList.remove('nav-open');
+    overlay.classList.remove('nav-overlay-open');
+    hamburger.classList.remove('nav-hamburger-open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+</script>
 </body>
 </html>
